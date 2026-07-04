@@ -1,0 +1,107 @@
+version: '3.8'
+services:
+  # stream server jellyfin
+  jellyfin:
+    image: jellyfin/jellyfin:latest
+    container_name: jellyfin
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    ports:
+      - ${JELLYFIN_HTTP_PORT}:8096/tcp
+      - ${JELLYFIN_CLIENT_DISCOVERY_PORT}:7359/udp
+    volumes:
+      - ${JELLYFIN_CONFIG_PATH}:/config
+      - ${JELLYFIN_CACHE_PATH}:/cache
+      - type: bind
+        source: ${STREAM_MEDIA_PATH}
+        target: /media
+    restart: unless-stopped
+  # qbittorrent container
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      WEBUI_PORT: ${QBITTORRENT_WEBUI_PORT}
+      UMASK: ${QBITTORRENT_UMASK}
+    volumes:
+      - ${QBITTORRENT_CONFIG_PATH}:/config
+      - ${STREAM_MEDIA_PATH}:/stream
+    restart: unless-stopped
+    network_mode: host
+  # Seerr container
+  seerr:
+    image: ghcr.io/seerr-team/seerr:latest
+    init: true
+    container_name: seerr
+    environment:
+      LOG_LEVEL: ${SEERR_LOG_LEVEL}
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    volumes:
+      - ${SEERR_CONFIG_PATH}:/app/config
+    healthcheck:
+      test: wget --no-verbose --tries=1 --spider http://localhost:5055/api/v1/settings/public || exit 1
+      start_period: 20s
+      timeout: 3s
+      interval: 15s
+      retries: 3
+    restart: unless-stopped
+    network_mode: host
+  # Jackett container
+  jackett:
+    image: lscr.io/linuxserver/jackett:latest
+    container_name: jackett
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+      AUTO_UPDATE: ${JACKETT_AUTO_UPDATE}
+    volumes:
+      - ${JACKETT_CONFIG_PATH}:/config
+    restart: unless-stopped
+    network_mode: host
+  # Radarr container
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    volumes:
+      - ${RADARR_CONFIG_PATH}:/config
+      - ${STREAM_MEDIA_PATH}:/stream
+    restart: unless-stopped
+    network_mode: host
+  # Sonarr container
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    volumes:
+      - ${SONARR_CONFIG_PATH}:/config
+      - ${STREAM_MEDIA_PATH}:/stream
+    restart: unless-stopped
+    network_mode: host
+  # Bazarr container
+  bazarr:
+    image: lscr.io/linuxserver/bazarr:latest
+    container_name: bazarr
+    environment:
+      PUID: ${PUID}
+      PGID: ${PGID}
+      TZ: ${TZ}
+    volumes:
+      - ${BAZARR_CONFIG_PATH}:/config
+      - ${STREAM_MEDIA_PATH}:/stream
+    restart: unless-stopped
+    network_mode: host
