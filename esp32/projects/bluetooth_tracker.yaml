@@ -7,7 +7,7 @@ esphome:
 
 # ESP32 hardware and firmware framework settings
 esp32:
-  variant: esp32                        # Standard ESP32 chip (not S2/S3/C3)
+  variant: esp32                        # Standard ESP32. See variants for other ESP32 chips — https://esphome.io/components/esp32/#configuration-variables
   framework:
     type: esp-idf                       # Use Espressif IDF; required for Bluetooth proxy
 

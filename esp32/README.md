@@ -15,7 +15,7 @@ O arquivo principal da configuração é [`projects/bluetooth_tracker.yaml`](pro
 | Componente | Função |
 |---|---|
 | `bluetooth_proxy` | Ativa o proxy BLE (função principal do projeto) |
-| `esp32` + `esp-idf` | Framework necessário para Bluetooth no ESP32 |
+| `esp32` + `esp-idf` | Hardware e framework; `variant` define o chip (ex.: `esp32`, `esp32s3`) — ver [configuration variables](https://esphome.io/components/esp32/#configuration-variables) |
 | `wifi` | Conexão à rede local (`power_save_mode: none` mantém o proxy responsivo) |
 | `api` | Integração nativa com o Home Assistant |
 | `ota` | Atualizações de firmware via Wi-Fi, sem cabo USB |
@@ -25,10 +25,12 @@ O arquivo principal da configuração é [`projects/bluetooth_tracker.yaml`](pro
 
 Credenciais e identificação do dispositivo ficam em [`projects/secrets.yaml`](projects/secrets.yaml) — **não commite este arquivo** com dados reais.
 
+Use o arquivo  [`projects/bluetooth_tracker.yaml`](projects/bluetooth_tracker.yaml) como template para gravação em seus dispositivos ESP32. Veja as orientações à baixo sobre a gravação. Após instalado o gravador via Docker Compose acesse a aplicação via browser e crie um novo dispositivo colando o arquivo template com os dados do seu projeto.
+
 ## Pré-requisitos
 
-- ESP32 (chip padrão, não S2/S3/C3)
-- Cabo USB para a primeira gravação
+- ESP32 compatível com Bluetooth proxy (chip padrão `esp32`; confira outras variantes na [documentação do componente ESP32](https://esphome.io/components/esp32/#configuration-variables))
+- Cabo USB para a primeira gravação. É necessário um cado de qualidade, próprio para transferência de dados. Cabos de carregador de celular não irão funcionar para a gravação.
 - Home Assistant com a integração [ESPHome](https://www.home-assistant.io/integrations/esphome/) habilitada
 - Docker e Docker Compose (para compilar e gravar via container)
 
@@ -43,7 +45,9 @@ Credenciais e identificação do dispositivo ficam em [`projects/secrets.yaml`](
    wifi_password: "your_wifi_password"
    ```
 
-2. (Opcional) Descomente o bloco `manual_ip` em `bluetooth_tracker.yaml` e use os valores de `static_ip`, `gateway` e `subnet` do `secrets.yaml` se quiser IP fixo.
+2. Confira `esp32.variant` em `bluetooth_tracker.yaml` e ajuste conforme o chip da sua placa. O valor padrão é `esp32` (ESP32 clássico). Para S2, S3, C3 ou outras variantes, consulte a lista completa em [ESPHome — ESP32 configuration variables](https://esphome.io/components/esp32/#configuration-variables).
+
+3. (Opcional) Descomente o bloco `manual_ip` em `bluetooth_tracker.yaml` e use os valores de `static_ip`, `gateway` e `subnet` do `secrets.yaml` se quiser IP fixo.
 
 ## Gravação com Docker Compose
 
@@ -108,6 +112,7 @@ Consulte a documentação oficial abaixo para detalhes atualizados sobre compone
 
 | Recurso | Descrição |
 |---|---|
+| [ESPHome — ESP32](https://esphome.io/components/esp32/#configuration-variables) | Variantes de chip (`variant`), framework e demais opções de hardware |
 | [ESPHome](https://esphome.io/) | Documentação principal — instalação, componentes, guias e referência YAML |
 | [ESPHome Projects](https://esphome.io/projects/) | Projetos prontos e exemplos de configuração para casos de uso comuns |
 | [Home Assistant — ESPHome](https://www.home-assistant.io/integrations/esphome) | Integração oficial do ESPHome com o Home Assistant |
