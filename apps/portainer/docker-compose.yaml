@@ -1,0 +1,15 @@
+services:
+  portainer:
+    image: portainer/portainer-ce:latest
+    container_name: portainer
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      # Map a directory of your choice on the host to persist Portainer data
+      - /home/username/yourpath/portainer/data:/data
+    ports:
+      - 9443:9443
+      - 9000:9000

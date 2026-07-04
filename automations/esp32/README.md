@@ -54,7 +54,7 @@ Use o arquivo  [`projects/bluetooth_tracker.yaml`](projects/bluetooth_tracker.ya
 A forma mais simples de compilar e gravar o firmware é subir o ESPHome em um container. Não é necessário instalar o ESPHome localmente — o Docker cuida do ambiente de build.
 
 ```bash
-cd esp32
+cd automations/esp32
 docker compose up -d
 ```
 
@@ -73,6 +73,8 @@ Após a primeira gravação, o dispositivo conecta ao Wi-Fi e aparece automatica
 
 ### Comandos úteis
 
+Execute a partir de `automations/esp32`:
+
 ```bash
 # Subir o ESPHome
 docker compose up -d
@@ -87,12 +89,14 @@ docker compose down
 ## Estrutura do diretório
 
 ```
-esp32/
-├── docker-compose.yaml          # ESPHome via Docker (build + flash + OTA)
-├── README.md
-└── projects/
-    ├── bluetooth_tracker.yaml   # Configuração do dispositivo
-    └── secrets.yaml             # Credenciais e nomes (local, não versionar)
+home-server/
+└── automations/
+    └── esp32/
+        ├── docker-compose.yaml          # ESPHome via Docker (build + flash + OTA)
+        ├── README.md
+        └── projects/
+            ├── bluetooth_tracker.yaml   # Configuração do dispositivo
+            └── secrets.yaml             # Credenciais e nomes (local, não versionar)
 ```
 
 ## Integração com o Home Assistant
