@@ -1,0 +1,48 @@
+# Core ESPHome device identity and metadata
+esphome:
+  name: !secret device_name                      # Unique device ID used by ESPHome and Home Assistant
+  friendly_name: !secret device_friendly_name    # Human-readable name shown in Home Assistant
+  min_version: 2026.4.0                          # ESPHome 2026.4.0 or newer required for this configuration
+  name_add_mac_suffix: false                     # Do not append MAC address to the device name
+
+# ESP32 hardware and firmware framework settings
+esp32:
+  variant: esp32                        # Standard ESP32 chip (not S2/S3/C3)
+  framework:
+    type: esp-idf                       # Use Espressif IDF; required for Bluetooth proxy
+
+# Serial log output for debugging and troubleshooting
+logger:
+
+# Enables communication with Home Assistant over the native ESPHome API
+api:
+
+# Allows firmware updates over Wi-Fi without a USB cable
+ota:
+  - platform: esphome
+
+# Enables Wi-Fi setup via USB serial using the Improv protocol (e.g. ESPHome Web / HA app)
+improv_serial:
+
+# Wi-Fi connection settings
+wifi:
+  ssid: !secret wifi_ssid               # Network name loaded from secrets.yaml
+  password: !secret wifi_password       # Network password loaded from secrets.yaml
+  power_save_mode: none                 # Disable Wi-Fi sleep to keep Bluetooth proxy responsive
+  min_auth_mode: WPA2                   # Require WPA2 or stronger encryption
+  # manual_ip:
+    # Set this to the IP of the ESP
+    # static_ip: !secret static_ip
+    # Set this to the IP address of the router. Often ends with .1
+    # gateway: !secret gateway
+    # The subnet of the network. 255.255.255.0 works for most home networks.
+    # subnet: !secret subnet
+
+# Fallback captive portal when Wi-Fi credentials are missing or connection fails
+captive_portal:
+
+# Built-in web interface for device status and logs (accessible via device IP)
+web_server:
+
+# Turns this ESP32 into a Bluetooth proxy so Home Assistant can track BLE devices
+bluetooth_proxy:
