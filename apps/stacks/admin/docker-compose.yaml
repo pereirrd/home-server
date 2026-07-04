@@ -1,0 +1,27 @@
+version: '3.8'
+services:
+  portainer-backup:
+    image: savagesoftware/portainer-backup:latest
+    container_name: portainer-backup
+    restart: unless-stopped
+    command: schedule
+    environment:
+      TZ: ${TZ}
+      PUID: ${PUID}
+      PGID: ${PGID}
+      PORTAINER_BACKUP_URL: ${PORTAINER_BACKUP_URL}
+      PORTAINER_BACKUP_TOKEN: ${PORTAINER_BACKUP_TOKEN}
+      PORTAINER_BACKUP_OVERWRITE: ${PORTAINER_BACKUP_OVERWRITE}
+      PORTAINER_BACKUP_SCHEDULE: ${PORTAINER_BACKUP_SCHEDULE}
+      PORTAINER_BACKUP_STACKS: ${PORTAINER_BACKUP_STACKS}
+      PORTAINER_BACKUP_DRYRUN: ${PORTAINER_BACKUP_DRYRUN}
+      PORTAINER_BACKUP_CONCISE: ${PORTAINER_BACKUP_CONCISE}
+      PORTAINER_BACKUP_DIRECTORY: ${PORTAINER_BACKUP_DIRECTORY}
+      PORTAINER_BACKUP_FILENAME: ${PORTAINER_BACKUP_FILENAME}
+    volumes:
+      - ${PORTAINER_BACKUP_HOST_PATH}:/backup:rw
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared_tunnel
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARED_TUNNEL_TOKEN}
+    restart: always
