@@ -23,7 +23,7 @@ O arquivo principal da configuração é [`projects/bluetooth_tracker.yaml`](pro
 | `web_server` | Interface web local para logs e status |
 | `captive_portal` | Portal de fallback quando o Wi-Fi falha |
 
-Credenciais e identificação do dispositivo ficam em [`projects/secrets.yaml`](projects/secrets.yaml) — **não commite este arquivo** com dados reais.
+Credenciais e identificação do dispositivo ficam em `projects/secrets.yaml` (criado localmente a partir de [`secrets.yaml.example`](projects/secrets.yaml.example)) — **não commite** `secrets.yaml` com dados reais.
 
 Use o arquivo  [`projects/bluetooth_tracker.yaml`](projects/bluetooth_tracker.yaml) como template para gravação em seus dispositivos ESP32. Veja as orientações à baixo sobre a gravação. Após instalado o gravador via Docker Compose acesse a aplicação via browser e crie um novo dispositivo colando o arquivo template com os dados do seu projeto.
 
@@ -36,13 +36,10 @@ Use o arquivo  [`projects/bluetooth_tracker.yaml`](projects/bluetooth_tracker.ya
 
 ## Configuração
 
-1. Copie ou edite `projects/secrets.yaml` com os valores do seu ambiente:
+1. Copie o template e preencha com os valores do seu ambiente:
 
-   ```yaml
-   device_name: "esp32-ble-tracker-example"
-   device_friendly_name: "ESP32 BLE Tracker Example"
-   wifi_ssid: "your_wifi_ssid"
-   wifi_password: "your_wifi_password"
+   ```bash
+   cp projects/secrets.yaml.example projects/secrets.yaml
    ```
 
 2. Confira `esp32.variant` em `bluetooth_tracker.yaml` e ajuste conforme o chip da sua placa. O valor padrão é `esp32` (ESP32 clássico). Para S2, S3, C3 ou outras variantes, consulte a lista completa em [ESPHome — ESP32 configuration variables](https://esphome.io/components/esp32/#configuration-variables).
@@ -96,7 +93,8 @@ home-server/
         ├── README.md
         └── projects/
             ├── bluetooth_tracker.yaml   # Configuração do dispositivo
-            └── secrets.yaml             # Credenciais e nomes (local, não versionar)
+            ├── secrets.yaml.example     # Template de credenciais (versionado)
+            └── secrets.yaml             # Credenciais locais (não versionar)
 ```
 
 ## Integração com o Home Assistant
