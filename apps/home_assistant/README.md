@@ -1,29 +1,26 @@
 # Home Assistant
 
-Documentação das aplicações instaladas no [Home Assistant](https://www.home-assistant.io/) do home server. Todas rodam no formato **Apps** (anteriormente chamados de *add-ons*), gerenciadas pela interface do próprio HA — Settings → Apps.
+Documentação das aplicações e integrações instaladas no [Home Assistant](https://www.home-assistant.io/) do home server. Apps (anteriormente *add-ons*) são gerenciados em **Settings → Apps**; integrações customizadas como Bermuda e Homelable são instaladas via **HACS**.
 
 > **Importante:** este diretório documenta o que está instalado na instância. A configuração detalhada de cada app deve seguir a documentação oficial referenciada abaixo.
 
 ## Repositórios de origem
 
-
-| Origem                                   | Apps instalados           |
-| ---------------------------------------- | ------------------------- |
-| Repositório oficial de Apps do HA        | AdGuard Home, Uptime Kuma |
-| Comunidade (via repositório customizado) | HACS, Immich              |
-
+| Origem                                   | Apps / integrações instalados |
+| ---------------------------------------- | ----------------------------- |
+| Repositório oficial de Apps do HA        | AdGuard Home, Uptime Kuma     |
+| Comunidade (via repositório customizado) | HACS, Immich                  |
+| HACS (integrações customizadas)          | Bermuda, Homelable            |
 
 Para instalar apps de repositórios da comunidade, é necessário adicionar a URL do repositório em **Settings → Apps → Repositories** no Home Assistant. O **HACS** estende essa capacidade para integrações, temas e componentes customizados além dos apps em si.
 
 ## Aplicações
 
-
-
 ### HACS
 
 O [Home Assistant Community Store (HACS)](https://hacs.xyz/) é a loja da comunidade para o Home Assistant. Permite descobrir, instalar e atualizar integrações, dashboards, temas e templates mantidos por terceiros — conteúdo que não faz parte do repositório oficial de Apps.
 
-Nesta instalação, o HACS é a **base para expandir o HA com repositórios da comunidade**, incluindo o repositório que disponibiliza o app Immich.
+Nesta instalação, o HACS é a **base para expandir o HA com repositórios da comunidade**, incluindo o repositório que disponibiliza o app Immich e as integrações Bermuda e Homelable.
 
 **Referência:** [HACS — Configuração inicial](https://hacs.xyz/docs/use/configuration/basic/)
 
@@ -56,11 +53,49 @@ Instalado a partir do repositório da comunidade [fabio-garavini/hassio-addons](
 - [fabio-garavini/hassio-addons](https://github.com/fabio-garavini/hassio-addons)
 - [Immich — Documentação](https://immich.app/docs)
 
+### Bermuda
 
+[Bermuda](https://github.com/agittins/bermuda) é uma integração customizada para o Home Assistant que rastreia a presença e a localização de dispositivos Bluetooth Low Energy (BLE) dentro e perto da casa. Processa os anúncios BLE coletados pelo HA — vindos de proxies ESPHome, integração Bluetooth ou dispositivos Shelly Plus — e estima em qual **Área** (cômodo) cada dispositivo está, com base na intensidade do sinal (RSSI) recebido por cada scanner.
+
+Para cada dispositivo rastreado, a integração expõe:
+
+| Entidade | Função |
+|---|---|
+| `device_tracker` | Estado home/away |
+| Sensor de Área | Nome da área mais próxima (proxy associado a um cômodo no HA) |
+| Sensor de Distância | Estimativa de distância em relação ao proxy mais próximo |
+
+Funciona bem com os proxies ESP32 documentados em [`automations/esp32`](../../automations/esp32/README.md): quanto mais scanners distribuídos pela casa, melhor a precisão. Para telefones Android/iOS com MAC randomizado, é necessário configurar o componente **Private BLE Device** do Home Assistant.
+
+Instalado via **HACS** (integração customizada, não é um App/add-on).
+
+**Referências:**
+
+- [Bermuda — Wiki oficial](https://github.com/agittins/bermuda/wiki/)
+- [agittins/bermuda](https://github.com/agittins/bermuda)
+
+### Homelable
+
+[Homelable](https://github.com/Pouzor/homelable) é um visualizador self-hosted de infraestrutura de homelab. Permite montar um **diagrama interativo da rede** com monitoramento de status em tempo real (online/offline) dos serviços e dispositivos do home server.
+
+Principais recursos:
+
+- **Scanner de rede** — descobre hosts e serviços via `nmap` nos ranges CIDR configurados e popula uma fila de dispositivos pendentes para aprovação no canvas
+- **Health checks** — ping, HTTP/S, TCP, SSH, Prometheus e `/health` por nó
+- **Importação Zigbee/Z-Wave** — topologia a partir de Zigbee2MQTT e Z-Wave JS UI via MQTT
+- **Estilos personalizáveis** — diagrama exportável como PNG
+
+Nesta instalação, roda como **integração/app do Home Assistant via HACS** (versão HA do projeto), complementando o mapa visual da infraestrutura documentada nas [stacks Docker](../stacks/admin/README.md) e demais serviços do home server.
+
+**Referências:**
+
+- [Pouzor/homelable](https://github.com/Pouzor/homelable)
+- [Homelable — FEATURES.md](https://github.com/Pouzor/homelable/blob/main/FEATURES.md)
+- [Homelable — INSTALLATION.md](https://github.com/Pouzor/homelable/blob/main/INSTALLATION.md)
 
 ## Integração com o home server
 
-O Home Assistant centraliza automações e monitoramento da casa. Os proxies ESP32 documentados em `[automations/esp32](../../automations/esp32/README.md)` integram-se ao HA via ESPHome para estender o alcance Bluetooth (BLE) e rastrear dispositivos.
+O Home Assistant centraliza automações e monitoramento da casa. Os proxies ESP32 documentados em [`automations/esp32`](../../automations/esp32/README.md) integram-se ao HA via ESPHome para estender o alcance Bluetooth (BLE); a integração **Bermuda** usa esses dados para estimar presença e cômodo de cada dispositivo BLE. O **Homelable** complementa essa visão com um mapa interativo dos dispositivos e serviços de rede do home server.
 
 Para adicionar um novo app de repositório da comunidade:
 
@@ -83,5 +118,9 @@ Consulte sempre a documentação oficial de cada app antes de alterar configura�
 - [fabio-garavini/hassio-addons](https://github.com/fabio-garavini/hassio-addons)
 - [Immich](https://immich.app/)
 - [Immich — Documentação](https://immich.app/docs)
+- [Bermuda — Wiki oficial](https://github.com/agittins/bermuda/wiki/)
+- [agittins/bermuda](https://github.com/agittins/bermuda)
+- [Pouzor/homelable](https://github.com/Pouzor/homelable)
+- [Homelable — FEATURES.md](https://github.com/Pouzor/homelable/blob/main/FEATURES.md)
+- [Homelable — INSTALLATION.md](https://github.com/Pouzor/homelable/blob/main/INSTALLATION.md)
 - [ESP32 Bluetooth Tracker](../../automations/esp32/README.md)
-
