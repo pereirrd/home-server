@@ -4,7 +4,7 @@ Repositório para registrar minha experiência montando e operando um **home ser
 
 ## Sobre este repositório
 
-Este projeto tem caráter **educativo**, de **contribuição** e **diversão** para entusiastas de automação residencial, mídia, jogos retro, containers e IoT. Os arquivos `docker-compose` e `env.example` presentes aqui são **exemplos ilustrativos** da minha stack em funcionamento — servem como ponto de partida para estudo, não como receita pronta para copiar e colar em funcionamento.
+Este projeto tem caráter **educativo**, de **contribuição** e **diversão** para entusiastas de automação residencial, mídia, jogos retro, containers e IoT. Os arquivos `docker-compose` e `env.example` presentes aqui são **exemplos ilustrativos** da minha stack em funcionamento — servem como ponto de partida para estudo, não como receita pronta para copiar e colar somente.
 
 Cada ambiente é único: hardware, rede, storage e necessidades diferem. O que funciona aqui pode precisar de adaptação no seu setup.
 
@@ -17,6 +17,22 @@ A documentação deste repositório é um **guia rápido**. Para configurar qual
 3. **Entenda os conceitos** por trás de cada ferramenta antes de expor serviços na internet.
 
 O universo de home server é **muito vasto**. Além do que está documentado aqui, existem dezenas de alternativas, integrações e projetos open source igualmente interessantes e úteis — vale explorar, experimentar e compartilhar o que aprender.
+
+## Hardware
+
+A infraestrutura de software documentada neste repositório roda em dois dispositivos separados.
+
+### Raspberry Pi 5 — containers e stacks
+
+Responsável pelo [Portainer](apps/portainer/README.md) e por todas as [stacks Docker](apps/stacks/admin/README.md). Sistema operacional [Ubuntu Trixie 13](https://ubuntu.com/) com gerenciamento via [Webmin](https://webmin.com/) — interface web para administração do SO (usuários, serviços, arquivos, rede, entre outros).
+
+**Referências:** [Raspberry Pi 5](https://www.raspberrypi.com/products/raspberry-pi-5/) · [Webmin](https://webmin.com/)
+
+### Raspberry Pi 4 — automação residencial
+
+Dedicado ao [Home Assistant](apps/home_assistant/README.md). O HA roda **diretamente no dispositivo como sistema operacional**, no modo **Supervisor** (instalação gerenciada com suporte nativo a apps/add-ons).
+
+**Referência:** [Raspberry Pi 4 Model B](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/)
 
 ## Visão geral
 
@@ -37,7 +53,7 @@ Automations ESP32        → proxies Bluetooth para o HA
 | ------------------ | --------------------------------------------------------- |
 | **Portainer**      | Gerenciamento de containers Docker (Raspberry Pi 5)       |
 | **Stacks**         | Serviços agrupados por contexto, deploy via Portainer     |
-| **Home Assistant** | Automação residencial e apps integrados                   |
+| **Home Assistant** | Automação residencial e apps integrados (Raspberry Pi 4)  |
 | **ESP32**          | Extensão de alcance BLE para rastreamento de dispositivos |
 
 
