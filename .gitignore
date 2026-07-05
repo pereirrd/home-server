@@ -1,0 +1,21 @@
+# Environment files with secrets
+.env
+**/.env
+.env.*
+!.env.example
+!**/.env.example
+!**/env.example
+
+# ESPHome local secrets (copy from secrets.yaml.example)
+automations/esp32/projects/secrets.yaml
+
+# OS and editor
+.DS_Store
+Thumbs.db
+*.swp
+*.swo
+*~
+
+# Backup artifacts
+*.tar.gz
+*.bak
