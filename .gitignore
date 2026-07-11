@@ -8,6 +8,7 @@
 
 # ESPHome local secrets (copy from secrets.yaml.example)
 automations/esp32/projects/secrets.yaml
+automations/esp32/projects/**/secrets.yaml
 
 # OS and editor
 .DS_Store

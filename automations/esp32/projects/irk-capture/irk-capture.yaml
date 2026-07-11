@@ -1,0 +1,27 @@
+# IRK Capture — captures Apple/Android Bluetooth Identity Resolving Keys (IRK)
+# Package: https://github.com/DerekSeaman/irk-capture
+# Requires ESP-IDF (Arduino framework is NOT supported).
+
+substitutions:
+  device_name: !secret device_name
+  friendly_name: !secret device_friendly_name
+  api_key: !secret api_key
+  ota_password: !secret ota_password
+  esp32_variant: esp32c3                    # Change to match your chip (esp32, esp32c3, esp32c6, esp32s3, etc.)
+  esp32_board: esp32-c3-devkitm-1           # Change to match your board ID
+  ble_name: !secret ble_name
+
+packages:
+  device:
+    url: https://github.com/DerekSeaman/irk-capture
+    ref: main
+    file: ESPHome Devices/irk-capture-base.yaml
+    refresh: always
+
+# Override the package Wi-Fi config with local secrets
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+  ap:
+    ssid: "${friendly_name} Fallback"
+    password: !secret wifi_captive
