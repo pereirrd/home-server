@@ -8,9 +8,6 @@ services:
       PUID: ${PUID}
       PGID: ${PGID}
       TZ: ${TZ}
-    ports:
-      - ${JELLYFIN_HTTP_PORT}:8096/tcp
-      - ${JELLYFIN_CLIENT_DISCOVERY_PORT}:7359/udp
     volumes:
       - ${JELLYFIN_CONFIG_PATH}:/config
       - ${JELLYFIN_CACHE_PATH}:/cache
@@ -18,6 +15,10 @@ services:
         source: ${STREAM_MEDIA_PATH}
         target: /media
     restart: unless-stopped
+    networks:
+      - proxy_network
+      - stream_network
+
   # qbittorrent container
   qbittorrent:
     image: lscr.io/linuxserver/qbittorrent:latest
@@ -32,7 +33,10 @@ services:
       - ${QBITTORRENT_CONFIG_PATH}:/config
       - ${STREAM_MEDIA_PATH}:/stream
     restart: unless-stopped
-    network_mode: host
+    networks:
+      - proxy_network
+      - stream_network
+      
   # Seerr container
   seerr:
     image: ghcr.io/seerr-team/seerr:latest
@@ -52,7 +56,10 @@ services:
       interval: 15s
       retries: 3
     restart: unless-stopped
-    network_mode: host
+    networks:
+      - proxy_network
+      - stream_network
+
   # Jackett container
   jackett:
     image: lscr.io/linuxserver/jackett:latest
@@ -65,7 +72,10 @@ services:
     volumes:
       - ${JACKETT_CONFIG_PATH}:/config
     restart: unless-stopped
-    network_mode: host
+    networks:
+      - proxy_network
+      - stream_network
+
   # Radarr container
   radarr:
     image: lscr.io/linuxserver/radarr:latest
@@ -78,7 +88,10 @@ services:
       - ${RADARR_CONFIG_PATH}:/config
       - ${STREAM_MEDIA_PATH}:/stream
     restart: unless-stopped
-    network_mode: host
+    networks:
+      - proxy_network
+      - stream_network
+
   # Sonarr container
   sonarr:
     image: lscr.io/linuxserver/sonarr:latest
@@ -91,7 +104,10 @@ services:
       - ${SONARR_CONFIG_PATH}:/config
       - ${STREAM_MEDIA_PATH}:/stream
     restart: unless-stopped
-    network_mode: host
+    networks:
+      - proxy_network
+      - stream_network
+
   # Bazarr container
   bazarr:
     image: lscr.io/linuxserver/bazarr:latest
@@ -104,4 +120,12 @@ services:
       - ${BAZARR_CONFIG_PATH}:/config
       - ${STREAM_MEDIA_PATH}:/stream
     restart: unless-stopped
-    network_mode: host
+    networks:
+      - proxy_network
+      - stream_network
+
+networks:
+  proxy_network:
+    external: true
+  stream_network:
+    driver: bridge

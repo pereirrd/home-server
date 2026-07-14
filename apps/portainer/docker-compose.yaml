@@ -10,6 +10,12 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock:ro
       # Map a directory of your choice on the host to persist Portainer data
       - /home/username/yourpath/portainer/data:/data
-    ports:
-      - 9443:9443
-      - 9000:9000
+    networks:
+      - default
+      - proxy_network
+
+networks:
+  default:
+    driver: bridge
+  proxy_network:
+    external: true

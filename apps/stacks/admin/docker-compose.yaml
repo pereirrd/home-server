@@ -20,8 +20,36 @@ services:
       PORTAINER_BACKUP_FILENAME: ${PORTAINER_BACKUP_FILENAME}
     volumes:
       - ${PORTAINER_BACKUP_HOST_PATH}:/backup:rw
+    networks:
+      - admin_default
+      - proxy_network
+
   cloudflared:
     image: cloudflare/cloudflared:latest
     container_name: cloudflared_tunnel
     command: tunnel --no-autoupdate run --token ${CLOUDFLARED_TUNNEL_TOKEN}
     restart: always
+    networks:
+      - admin_default
+      - proxy_network
+
+  nginx:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      - '80:80'      # Porta pública HTTP (NPM assume o controle)
+      - '443:443'    # Porta pública HTTPS (NPM assume o controle)
+      - '81:81'      # Porta do Painel de Administração do NPM
+    volumes:
+      - ${NGINX_PROXY_DATA_PATH}:/data
+      - ${NGINX_PROXY_LETSENCRYPT_PATH}:/etc/letsencrypt
+    networks:
+      - admin_default
+      - proxy_network
+
+networks:
+  admin_default:
+    driver: bridge
+  proxy_network:
+    external: true
