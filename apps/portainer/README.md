@@ -8,11 +8,28 @@ O [Portainer](https://www.portainer.io/) é uma plataforma leve para gerenciar a
 
 Nesta instalação utiliza-se a **Community Edition (CE)** — versão gratuita, open source (licença zlib), sem chave de licença e sem telemetria. É adequada para uso pessoal e pequenos ambientes, oferecendo gestão completa de Docker, deploy de stacks, acesso a logs e console de containers.
 
+## Arquitetura de rede
+
+O Portainer **não publica portas no host**. Ele participa da rede externa `proxy_network` e o acesso à interface web é feito pelo [Nginx Proxy Manager](../stacks/admin/README.md).
+
+```bash
+docker network create proxy_network   # se ainda não existir
+```
+
+No NPM, aponte o Proxy Host para o container `portainer`. Portas internas da imagem:
+
+| Porta interna | Uso |
+| --- | --- |
+| `9443` | Interface web HTTPS |
+| `9000` | Interface web HTTP |
+
+Para o Proxy Host, o destino mais simples é `http://portainer:9000` (ou `https://portainer:9443` se preferir TLS ponta a ponta até o container).
+
 ## Papel no home server
 
 O Portainer roda em um **Raspberry Pi 5** (ARM64) e centraliza a operação das stacks:
 
-- [admin](../stacks/admin/README.md) — backup do Portainer e Cloudflare Tunnel
+- [admin](../stacks/admin/README.md) — Nginx Proxy Manager, backup do Portainer e Cloudflare Tunnel
 - [games](../stacks/games/README.md) — RomM
 - [stream](../stacks/stream/README.md) — ecossistema *Arr e Jellyfin
 
@@ -30,21 +47,17 @@ Substitua pelo caminho real no host onde a configuração e o banco de dados do 
 
 O container monta o socket Docker do host (`/var/run/docker.sock`) em modo somente leitura, permitindo que o Portainer controle o daemon local.
 
-| Porta | Uso |
-| --- | --- |
-| `9443` | Interface web HTTPS (recomendado) |
-| `9000` | Interface web HTTP |
-
 ## Deploy
 
-Este serviço deve ser iniciado **uma única vez pelo terminal**, antes de configurar as demais stacks no Portainer:
+Este serviço deve ser iniciado **pelo terminal**. A ordem recomendada é criar a `proxy_network`, subir o Portainer e em seguida a [stack admin](../stacks/admin/README.md) (que inclui o NPM):
 
 ```bash
+docker network create proxy_network
 cd apps/portainer
 docker compose up -d
 ```
 
-Na primeira execução, acesse `https://<host>:9443` (ou `http://<host>:9000`) e crie o usuário administrador.
+Na primeira execução, acesse o hostname configurado no NPM (ou temporariamente o IP do host na porta do painel do NPM, se ainda estiver criando o Proxy Host) e crie o usuário administrador.
 
 ## Referências
 

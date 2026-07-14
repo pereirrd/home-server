@@ -4,6 +4,33 @@ Stack de mídia e streaming do home server, baseada no ecossistema **\*Arr** —
 
 > **Importante:** este repositório contém apenas um **exemplo funcional** da stack. A integração correta entre os serviços (indexadores, clientes de download, paths de volume, perfis de qualidade, nomenclatura de arquivos etc.) depende de configuração detalhada. **Consulte sempre a documentação oficial** de cada aplicação para montar a pipeline de ponta a ponta.
 
+## Arquitetura de rede
+
+Os containers desta stack **não publicam portas no host**. O acesso às WebUIs passam pelo [Nginx Proxy Manager](../admin/README.md) na rede externa `proxy_network`. A comunicação entre os serviços da pipeline (Sonarr ↔ qBittorrent, Seerr ↔ Radarr, etc.) usa a rede local `stream_network`.
+
+```
+proxy_network  →  acesso HTTP via NPM (jellyfin, seerr, sonarr, …)
+stream_network →  tráfego interno entre containers da stack
+```
+
+Crie a rede externa uma vez, se ainda não existir:
+
+```bash
+docker network create proxy_network
+```
+
+No NPM, configure um Proxy Host por serviço usando o **nome do container** e a porta interna:
+
+| Container | Porta interna |
+| --- | --- |
+| `jellyfin` | `8096` |
+| `seerr` | `5055` |
+| `qbittorrent` | valor de `QBITTORRENT_WEBUI_PORT` (padrão `8080`) |
+| `sonarr` | `8989` |
+| `radarr` | `7878` |
+| `bazarr` | `6767` |
+| `jackett` | `9117` |
+
 ## Pipeline automatizada
 
 Quando configurada corretamente, o fluxo típico funciona assim:
@@ -20,7 +47,7 @@ Seerr → Sonarr / Radarr → Indexadores → qBittorrent → importação → B
 6. **Bazarr** — busca e associa legendas no idioma desejado aos arquivos de vídeo.
 7. **Jellyfin** — escaneia a biblioteca e disponibiliza o catálogo para streaming em qualquer dispositivo.
 
-Todos os serviços de download e organização compartilham o mesmo volume de mídia (`STREAM_MEDIA_PATH`), o que facilita hard links, moves rápidos e permissões consistentes entre containers.
+Todos os serviços de download e organização compartilham o mesmo volume de mídia (`STREAM_MEDIA_PATH`), o que facilita hard links, moves rápidos e permissões consistentes entre containers. Nas integrações entre apps, use o hostname do container (ex.: `http://qbittorrent:8080`) em vez de `localhost` ou do IP do host.
 
 ## Aplicações
 
@@ -28,7 +55,7 @@ Todos os serviços de download e organização compartilham o mesmo volume de m�
 
 Interface de **pedidos de mídia** para usuários finais. Integra com Jellyfin (também Plex e Emby) para exibir o que já existe na biblioteca e encaminha solicitações de filmes e séries para Radarr e Sonarr. Oferece controle de permissões, aprovação de pedidos e notificações.
 
-Nesta stack, roda em `network_mode: host` na porta `5055`.
+Nesta stack, a configuração fica em `SEERR_CONFIG_PATH`; a WebUI interna escuta na porta `5055`.
 
 ### Sonarr
 
@@ -58,13 +85,13 @@ Nesta stack, monitora os mesmos diretórios de mídia montados em `/stream`.
 
 **Servidor de mídia** free software (GPL). Organiza e transmite filmes, séries, música, TV ao vivo, livros e fotos a partir do seu próprio servidor — sem taxas, sem tracking e sem dependência de serviços externos. Suporta múltiplos clientes (web, mobile, TV, Kodi) e recursos como SyncPlay, DVR e gerenciamento multi-usuário.
 
-Nesta stack, a mídia é montada em `/media` a partir de `STREAM_MEDIA_PATH` e exposta na porta `JELLYFIN_HTTP_PORT` (padrão `8096`).
+Nesta stack, a mídia é montada em `/media` a partir de `STREAM_MEDIA_PATH`. O acesso externo à WebUI e ao streaming passa pelo NPM (porta interna `8096`).
 
 ### qBittorrent
 
 **Cliente BitTorrent** open source, alternativa ao µTorrent. Interface web para controle remoto, suporte a magnet links, DHT, PEX, filas de prioridade e seleção de arquivos dentro do torrent. É o ponto de download da pipeline: Sonarr e Radarr enviam torrents selecionados e monitoram o progresso via API.
 
-Nesta stack, roda em `network_mode: host` com WebUI na porta `QBITTORRENT_WEBUI_PORT` (padrão `8080`).
+Nesta stack, a WebUI usa a porta definida em `QBITTORRENT_WEBUI_PORT` (padrão `8080`), acessível via NPM e pelos demais containers na `stream_network`.
 
 ## Configuração
 
@@ -80,6 +107,7 @@ cp env.example .env
 | `PUID` / `PGID` | UID/GID do usuário dono dos arquivos no host |
 | `JELLYFIN_*_PATH` | Diretórios de config e cache do Jellyfin |
 | `QBITTORRENT_CONFIG_PATH` | Configuração do qBittorrent |
+| `QBITTORRENT_WEBUI_PORT` | Porta interna da WebUI do qBittorrent |
 | `SEERR_CONFIG_PATH` | Configuração do Seerr |
 | `SONARR_CONFIG_PATH` | Configuração do Sonarr |
 | `RADARR_CONFIG_PATH` | Configuração do Radarr |
@@ -94,7 +122,7 @@ A configuração da pipeline (conectar indexadores, definir root folders, mapear
 docker compose up -d
 ```
 
-Após subir os containers, acesse cada serviço pela WebUI e complete a configuração inicial antes de esperar automação end-to-end.
+Após subir os containers, configure os Proxy Hosts no Nginx Proxy Manager e complete a configuração inicial de cada WebUI antes de esperar automação end-to-end.
 
 ## Sugestão de conteúdo em português
 

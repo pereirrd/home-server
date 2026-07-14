@@ -2,6 +2,17 @@
 
 Stack de serviços de jogos do home server. Hospeda o [RomM](https://romm.app/), um gerenciador de ROMs self-hosted acessado pelo navegador.
 
+## Arquitetura de rede
+
+O RomM **não publica porta no host**. O acesso à interface web passa pelo [Nginx Proxy Manager](../admin/README.md) na rede externa `proxy_network`. O banco MariaDB (`romm-db`) fica apenas na rede local da stack (`default`), sem exposição ao proxy.
+
+```
+proxy_network  →  RomM (WebUI) via NPM
+default        →  RomM ↔ romm-db
+```
+
+No NPM, aponte o Proxy Host para o container `romm` na porta interna `8080`.
+
 ## Aplicações
 
 ### RomM
@@ -34,7 +45,7 @@ O fluxo típico é simples: organizar as ROMs em pastas por plataforma, apontar 
 | Emulação no browser | EmulatorJS, Ruffle |
 | Deploy | Docker / Docker Compose |
 
-Nesta stack, o RomM roda junto com um container MariaDB (`romm-db`). A biblioteca de ROMs, saves, configurações e recursos são persistidos em volumes montados no host (`ROMM_LIBRARY_PATH`, `ROMM_ASSETS_PATH`, `ROMM_CONFIG_PATH`). A aplicação fica exposta na porta `ROMM_PORT` (padrão `9080`).
+Nesta stack, o RomM roda junto com um container MariaDB (`romm-db`). A biblioteca de ROMs, saves, configurações e recursos são persistidos em volumes montados no host (`ROMM_LIBRARY_PATH`, `ROMM_ASSETS_PATH`, `ROMM_CONFIG_PATH`).
 
 **Referência:** [RomM — Site oficial](https://romm.app/)
 
@@ -57,7 +68,6 @@ cp env.example .env
 | `ROMM_LIBRARY_PATH` | Diretório no host com as ROMs organizadas por plataforma |
 | `ROMM_ASSETS_PATH` | Diretório de saves, states e assets |
 | `ROMM_CONFIG_PATH` | Diretório de configuração (`config.yml`) |
-| `ROMM_PORT` | Porta exposta no host |
 
 Documentação complementar: [Metadata Providers](https://docs.romm.app/latest/Getting-Started/Metadata-Providers/) · [Folder Structure](https://docs.romm.app/latest/Getting-Started/Folder-Structure/)
 
@@ -67,4 +77,4 @@ Documentação complementar: [Metadata Providers](https://docs.romm.app/latest/G
 docker compose up -d
 ```
 
-Após o deploy, acesse `http://<host>:<ROMM_PORT>` no navegador para configurar o usuário administrador e iniciar o scan da biblioteca.
+Após o deploy, configure o Proxy Host no Nginx Proxy Manager e acesse o hostname definido para criar o usuário administrador e iniciar o scan da biblioteca.

@@ -44,7 +44,7 @@ O home server combina serviços de infraestrutura, mídia, jogos, automação re
 
 ```
 Portainer (gerenciador)
-    ├── Stack Admin      → backup + túnel Cloudflare
+    ├── Stack Admin      → Nginx Proxy Manager + backup + túnel Cloudflare
     ├── Stack Stream     → pipeline *Arr + Jellyfin
     └── Stack Games      → RomM
 
@@ -52,11 +52,13 @@ Home Assistant (apps)    → DNS, monitoramento, fotos, HACS
 Automations ESP32        → proxies Bluetooth para o HA
 ```
 
+No Raspberry Pi 5, as stacks usam redes Docker locais e uma rede externa compartilhada (`proxy_network`). O **Nginx Proxy Manager** é o único serviço que publica portas no host (`80`/`443`/`81`) e roteia as requisições HTTP/HTTPS para os containers pelo nome. Detalhes em [apps/stacks/admin/README.md](apps/stacks/admin/README.md).
 
 | Área               | Função                                                    |
 | ------------------ | --------------------------------------------------------- |
 | **Portainer**      | Gerenciamento de containers Docker (Raspberry Pi 5)       |
 | **Stacks**         | Serviços agrupados por contexto, deploy via Portainer     |
+| **Proxy**          | Nginx Proxy Manager — entrada HTTP/HTTPS na `proxy_network` |
 | **Home Assistant** | Automação residencial e apps integrados (Raspberry Pi 4)  |
 | **ESP32**          | Extensão de alcance BLE para rastreamento de dispositivos |
 
@@ -82,7 +84,7 @@ Automations ESP32        → proxies Bluetooth para o HA
 
 | Stack                                  | Descrição                                                            |
 | -------------------------------------- | -------------------------------------------------------------------- |
-| [admin](apps/stacks/admin/README.md)   | Backup do Portainer e Cloudflare Tunnel                              |
+| [admin](apps/stacks/admin/README.md)   | Nginx Proxy Manager, backup do Portainer e Cloudflare Tunnel         |
 | [stream](apps/stacks/stream/README.md) | Pipeline *Arr (Sonarr, Radarr, Bazarr, Jellyfin, Seerr, qBittorrent) |
 | [games](apps/stacks/games/README.md)   | RomM — gerenciador de ROMs no browser                                |
 
