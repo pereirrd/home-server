@@ -9,7 +9,7 @@ Documentação das aplicações e integrações instaladas no [Home Assistant](h
 | Origem                                   | Apps / integrações instalados |
 | ---------------------------------------- | ----------------------------- |
 | Repositório oficial de Apps do HA        | AdGuard Home, Uptime Kuma     |
-| Comunidade (via repositório customizado) | HACS, Immich                  |
+| Comunidade (via repositório customizado) | HACS                          |
 | HACS (integrações customizadas)          | Bermuda, Homelable            |
 
 Para instalar apps de repositórios da comunidade, é necessário adicionar a URL do repositório em **Settings → Apps → Repositories** no Home Assistant. O **HACS** estende essa capacidade para integrações, temas e componentes customizados além dos apps em si.
@@ -20,7 +20,7 @@ Para instalar apps de repositórios da comunidade, é necessário adicionar a UR
 
 O [Home Assistant Community Store (HACS)](https://hacs.xyz/) é a loja da comunidade para o Home Assistant. Permite descobrir, instalar e atualizar integrações, dashboards, temas e templates mantidos por terceiros — conteúdo que não faz parte do repositório oficial de Apps.
 
-Nesta instalação, o HACS é a **base para expandir o HA com repositórios da comunidade**, incluindo o repositório que disponibiliza o app Immich e as integrações Bermuda e Homelable.
+Nesta instalação, o HACS é a **base para expandir o HA com repositórios da comunidade**, incluindo as integrações Bermuda e Homelable.
 
 **Referência:** [HACS — Configuração inicial](https://hacs.xyz/docs/use/configuration/basic/)
 
@@ -41,17 +41,6 @@ Instalado a partir do **repositório oficial de Apps do Home Assistant** (mantid
 Instalado a partir do **repositório oficial de Apps do Home Assistant**.
 
 **Referência:** [Uptime Kuma — Home Assistant Community App](https://github.com/hassio-addons/app-uptime-kuma)
-
-### Immich
-
-[Immich](https://immich.app/) é uma solução self-hosted de alto desempenho para gerenciamento de fotos e vídeos — alternativa open source a serviços de nuvem como Google Photos. Oferece backup automático de dispositivos móveis, reconhecimento facial, álbuns compartilhados, busca por metadados e timeline de mídia.
-
-Instalado a partir do repositório da comunidade [fabio-garavini/hassio-addons](https://github.com/fabio-garavini/hassio-addons), que empacota diversos serviços populares como apps do Home Assistant.
-
-**Referências:**
-
-- [fabio-garavini/hassio-addons](https://github.com/fabio-garavini/hassio-addons)
-- [Immich — Documentação](https://immich.app/docs)
 
 ### Bermuda
 
@@ -116,8 +105,6 @@ Consulte sempre a documentação oficial de cada app antes de alterar configura�
 - [Uptime Kuma](https://uptime.kuma.pet/)
 - [Uptime Kuma — Home Assistant Community App](https://github.com/hassio-addons/app-uptime-kuma)
 - [fabio-garavini/hassio-addons](https://github.com/fabio-garavini/hassio-addons)
-- [Immich](https://immich.app/)
-- [Immich — Documentação](https://immich.app/docs)
 - [Bermuda — Wiki oficial](https://github.com/agittins/bermuda/wiki/)
 - [agittins/bermuda](https://github.com/agittins/bermuda)
 - [Pouzor/homelable](https://github.com/Pouzor/homelable)
