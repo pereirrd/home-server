@@ -31,6 +31,7 @@ O Portainer roda em um **Raspberry Pi 5** (ARM64) e centraliza a operação das 
 
 - [admin](../stacks/admin/README.md) — Nginx Proxy Manager, backup do Portainer e Cloudflare Tunnel
 - [games](../stacks/games/README.md) — RomM
+- [immich](../stacks/immich/README.md) — Immich (fotos e vídeos)
 - [stream](../stacks/stream/README.md) — ecossistema *Arr e Jellyfin
 
 Após a instalação inicial, as stacks são criadas e mantidas pela interface web do Portainer. O backup automatizado da instância Portainer é feito pela stack admin ([portainer-backup](../stacks/admin/README.md)).
