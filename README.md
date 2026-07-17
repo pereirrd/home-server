@@ -46,9 +46,10 @@ O home server combina serviços de infraestrutura, mídia, jogos, automação re
 Portainer (gerenciador)
     ├── Stack Admin      → Nginx Proxy Manager + backup + túnel Cloudflare
     ├── Stack Stream     → pipeline *Arr + Jellyfin
-    └── Stack Games      → RomM
+    ├── Stack Games      → RomM
+    └── Stack Immich     → fotos e vídeos (Immich)
 
-Home Assistant (apps)    → DNS, monitoramento, fotos, HACS
+Home Assistant (apps)    → DNS, monitoramento, HACS
 Automations ESP32        → proxies Bluetooth para o HA
 ```
 
@@ -87,6 +88,7 @@ No Raspberry Pi 5, as stacks usam redes Docker locais e uma rede externa compart
 | [admin](apps/stacks/admin/README.md)   | Nginx Proxy Manager, backup do Portainer e Cloudflare Tunnel         |
 | [stream](apps/stacks/stream/README.md) | Pipeline *Arr (Sonarr, Radarr, Bazarr, Jellyfin, Seerr, qBittorrent) |
 | [games](apps/stacks/games/README.md)   | RomM — gerenciador de ROMs no browser                                |
+| [immich](apps/stacks/immich/README.md) | Immich — fotos e vídeos self-hosted                                  |
 
 
 
@@ -96,7 +98,7 @@ No Raspberry Pi 5, as stacks usam redes Docker locais e uma rede externa compart
 
 | Documento                                                | Descrição                                                |
 | -------------------------------------------------------- | -------------------------------------------------------- |
-| [Home Assistant](apps/home_assistant/README.md)          | Apps instalados: HACS, AdGuard Home, Uptime Kuma, Immich |
+| [Home Assistant](apps/home_assistant/README.md)          | Apps instalados: HACS, AdGuard Home, Uptime Kuma         |
 | [ESP32 — Bluetooth Tracker](automations/esp32/README.md) | Proxies BLE integrados ao Home Assistant via ESPHome     |
 
 
@@ -112,6 +114,7 @@ home-server/
 │   └── stacks/
 │       ├── admin/           # Ferramentas administrativas
 │       ├── games/           # Jogos retro (RomM)
+│       ├── immich/          # Fotos e vídeos (Immich)
 │       └── stream/          # Mídia e streaming (*Arr + Jellyfin)
 ├── automations/
 │   └── esp32/               # Proxies Bluetooth (ESPHome)
