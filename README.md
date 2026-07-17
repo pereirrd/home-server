@@ -22,6 +22,8 @@ O universo de home server é **muito vasto**. Além do que está documentado aqu
 
 A infraestrutura de software documentada neste repositório roda em dois dispositivos separados, ambos com **8 GB de RAM**. Detalhes completos de placas, HATs PCIe, discos e topologia de armazenamento: [hardware/raspberry_pi/README.md](hardware/raspberry_pi/README.md).
 
+Os ESP32 usados como Bluetooth trackers e captura de IRK na automação residencial estão documentados em [hardware/esp32/README.md](hardware/esp32/README.md) (firmware em [automations/esp32](automations/esp32/README.md)).
+
 ### Raspberry Pi 5 — containers e stacks
 
 Responsável pelo [Portainer](apps/portainer/README.md) e por todas as [stacks Docker](apps/stacks/admin/README.md). Sistema operacional [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/) com gerenciamento via [Webmin](https://webmin.com/) — interface web para administração do SO (usuários, serviços, arquivos, rede, entre outros).
@@ -97,6 +99,7 @@ No Raspberry Pi 5, as stacks usam redes Docker locais e uma rede externa compart
 | Documento                                                | Descrição                                                |
 | -------------------------------------------------------- | -------------------------------------------------------- |
 | [Home Assistant](apps/home_assistant/README.md)          | Apps instalados: HACS, AdGuard Home, Uptime Kuma, Immich |
+| [ESP32 — Hardware](hardware/esp32/README.md)             | DevKit V1, DevKitC V4 e Mini C3 — inventário e specs     |
 | [ESP32 — Bluetooth Tracker](automations/esp32/README.md) | Proxies BLE integrados ao Home Assistant via ESPHome     |
 
 
@@ -116,7 +119,8 @@ home-server/
 ├── automations/
 │   └── esp32/               # Proxies Bluetooth (ESPHome)
 ├── hardware/
-│   └── raspberry_pi/        # Placas, HATs PCIe e armazenamento
+│   ├── raspberry_pi/        # Placas, HATs PCIe e armazenamento
+│   └── esp32/               # DevKits ESP32 (BLE tracker / IRK)
 └── README.md
 ```
 
