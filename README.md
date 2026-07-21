@@ -65,7 +65,7 @@ No Raspberry Pi 5, as stacks usam redes Docker locais e uma rede externa compart
 | **Home Assistant** | Automação residencial e apps integrados (Raspberry Pi 4)  |
 | **ESP32**          | Extensão de alcance BLE para rastreamento de dispositivos |
 
-
+![Visão geral do home server](shared/homelable-canvas.png)
 
 
 ## Documentação
