@@ -124,6 +124,7 @@ home-server/
 ├── hardware/
 │   ├── raspberry_pi/        # Placas, HATs PCIe e armazenamento
 │   └── esp32/               # DevKits ESP32 (BLE tracker / IRK)
+├── shared/                  # Arquivos úteis compartilhados com o repositório
 └── README.md
 ```
 
