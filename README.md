@@ -20,7 +20,7 @@ O universo de home server é **muito vasto**. Além do que está documentado aqu
 
 ## Hardware
 
-A infraestrutura de software documentada neste repositório roda em dois dispositivos separados, ambos com **8 GB de RAM**. Detalhes completos de placas, HATs PCIe, discos e topologia de armazenamento: [hardware/raspberry_pi/README.md](hardware/raspberry_pi/README.md).
+A infraestrutura de software documentada neste repositório roda em dois dispositivos separados, ambos Raspberry PI com **8 GB de RAM**. Detalhes completos de placas, HATs PCIe, discos e topologia de armazenamento: [hardware/raspberry_pi/README.md](hardware/raspberry_pi/README.md).
 
 Os ESP32 usados como Bluetooth trackers e captura de IRK na automação residencial estão documentados em [hardware/esp32/README.md](hardware/esp32/README.md) (firmware em [automations/esp32](automations/esp32/README.md)).
 
