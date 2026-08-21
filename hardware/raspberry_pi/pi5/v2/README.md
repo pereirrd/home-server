@@ -63,3 +63,8 @@ O HDD de 1TB é conectado através de um hub USB com alimentação externa.
 
 ### Comparativo de Periféricos
 - [Configuração v1 (Waveshare + Geekworm)](../v1/README.md)
+
+### Imagens do Hardware
+![Frontal](../../../../shared/raspberrypi5/v2/front.jpg)
+![Traseira](../../../../shared/raspberrypi5/v2/back.jpg)
+![GPIO](../../../../shared/raspberrypi5/v2/gpio.jpg)
