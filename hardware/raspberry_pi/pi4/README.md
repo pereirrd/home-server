@@ -1,6 +1,6 @@
 # Raspberry Pi 4
 
-Nó dedicado à [automação residencial](../../apps/home_assistant/README.md). O Home Assistant roda **diretamente no dispositivo** no modo **Supervisor** (instalação gerenciada com suporte nativo a add-ons).
+Nó dedicado à [automação residencial](../../../apps/home_assistant/README.md). O Home Assistant roda **diretamente no dispositivo** no modo **Supervisor** (instalação gerenciada com suporte nativo a add-ons).
 
 ### Especificações da placa
 

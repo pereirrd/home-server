@@ -11,19 +11,6 @@ Apresentando a infraestrutura física do home server. A documentação de softwa
 
 ---
 
-# Hardware — Raspberry Pi
-
-Apresentando a infraestrutura física do home server. A documentação de software (stacks, Portainer, Home Assistant) está no [README principal](../../README.md).
-
-## Visão geral
-
-| Dispositivo | RAM | Função | SO / boot |
-| ----------- | --- | ------ | --------- |
-| **Raspberry Pi 5** | 8 GB | Containers Docker, Portainer e stacks de mídia/jogos/admin | NVMe M.2 256 GB (boot) |
-| **Raspberry Pi 4** | 8 GB | Automação residencial (Home Assistant) | SD card 32 GB (boot) + SSD 224 GB (USB 3.0) |
-
----
-
 ## Raspberry Pi 5
 Para detalhes sobre a infraestrutura do Raspberry Pi 5, consulte o [README do pi5](./pi5/README.md).
 

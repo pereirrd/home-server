@@ -1,6 +1,6 @@
 # Raspberry Pi 5
 
-Placa principal da infraestrutura. Roda [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/) com administração via [Webmin](https://webmin.com/), hospedando o [Portainer](../../apps/portainer/README.md) e as [stacks Docker](../../apps/stacks/admin/README.md).
+Placa principal da infraestrutura. Roda [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/) com administração via [Webmin](https://webmin.com/), hospedando o [Portainer](../apps/portainer/README.md) e as [stacks Docker](../apps/stacks/admin/README.md).
 
 ### Especificações da placa
 
@@ -74,6 +74,7 @@ Shield montado na **parte inferior** do Pi 5 (via pogo pins). Expande o segundo 
 Com três discos ativos (NVMe + SATA + HDD), a fonte recomendada é **5 V ≥ 3 A** via USB-C — alinhada às especificações do X1006 e do Pi 5. Fontes GaN de 27 W (ex.: Geekworm XS-GaN-27W) são referência comum para esse tipo de montagem.
 
 ---
+
 
 ## Referências
 
