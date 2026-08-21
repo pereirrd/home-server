@@ -56,8 +56,8 @@ Shield montado na **parte inferior** do Pi 5 (via pogo pins). Expande o segundo 
 
 - **Wiki:** [X1006](https://wiki.geekworm.com/X1006)
 
-![Geekworm X1006 — vista 1](../../../shared/raspberrypi5/v1/X1006_1.jpg)
-![Geekworm X1006 — vista 2](../../../shared/raspberrypi5/v1/X1006_2.jpg)
+![Geekworm X1006 — vista 1](../../../../shared/raspberrypi5/v1/X1006_1.jpg)
+![Geekworm X1006 — vista 2](../../../../shared/raspberrypi5/v1/X1006_2.jpg)
 
 > O X1006 **não** é compatível com SSDs M.2 NVMe ou PCIe AHCI — apenas **M.2 SATA Key-B** e **HDD/SSD 2.5" SATA**. Discos novos precisam ser particionados e formatados antes do uso.
 
@@ -74,7 +74,6 @@ Shield montado na **parte inferior** do Pi 5 (via pogo pins). Expande o segundo 
 Com três discos ativos (NVMe + SATA + HDD), a fonte recomendada é **5 V ≥ 3 A** via USB-C — alinhada às especificações do X1006 e do Pi 5. Fontes GaN de 27 W (ex.: Geekworm XS-GaN-27W) são referência comum para esse tipo de montagem.
 
 ---
-
 
 ## Referências
 

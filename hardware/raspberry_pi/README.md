@@ -12,7 +12,7 @@ Apresentando a infraestrutura física do home server. A documentação de softwa
 ---
 
 ## Raspberry Pi 5
-Para detalhes sobre a infraestrutura do Raspberry Pi 5, consulte o [README do pi5](./pi5/README.md).
+Para detalhes sobre a infraestrutura do Raspberry Pi 5, consulte o [README V1](./pi5/v1/README.md) e a configuração atual no [README V2](./pi5/v2/README.md). O Raspberry Pi 5 é o mesmo só os pereféricos mudaram.
 
 ## Raspberry Pi 4
 Para detalhes sobre a infraestrutura do Raspberry Pi 4, consulte o [README do pi4](./pi4/README.md).
