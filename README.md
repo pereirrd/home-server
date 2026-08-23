@@ -26,17 +26,13 @@ Os ESP32 usados como Bluetooth trackers e captura de IRK na automação residenc
 
 ### Raspberry Pi 5 — containers e stacks
 
-Responsável pelo [Portainer](apps/portainer/README.md) e por todas as [stacks Docker](apps/stacks/admin/README.md). Sistema operacional [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/) com gerenciamento via [Webmin](https://webmin.com/) — interface web para administração do SO (usuários, serviços, arquivos, rede, entre outros).
+Responsável pelo [Portainer](apps/portainer/README.md) e por todas as [stacks Docker](apps/stacks/admin/README.md). Sistema operacional [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/).
 
-**Armazenamento:** boot no **M.2 NVMe 256 GB** ([Geekworm X1001](https://wiki.geekworm.com/X1001)); expansão via hub [Waveshare PCIe TO 2-CH](https://www.waveshare.com/wiki/PCIe_TO_2-CH_PCIe_HAT) + [Geekworm X1006](https://wiki.geekworm.com/X1006) com **HDD 2.5" 1 TB** e **M.2 SATA 256 GB**.
-
-**Referências:** [Raspberry Pi 5](https://www.raspberrypi.com/products/raspberry-pi-5/) · [Introducing Raspberry Pi 5](https://www.raspberrypi.com/news/introducing-raspberry-pi-5/) · [Webmin](https://webmin.com/)
+**Referências:** [Raspberry Pi 5](https://www.raspberrypi.com/products/raspberry-pi-5/) · [Introducing Raspberry Pi 5](https://www.raspberrypi.com/news/introducing-raspberry-pi-5/)
 
 ### Raspberry Pi 4 — automação residencial
 
 Dedicado ao [Home Assistant](apps/home_assistant/README.md). O HA roda **diretamente no dispositivo como sistema operacional**, no modo **Supervisor** (instalação gerenciada com suporte nativo a apps/add-ons).
-
-**Armazenamento:** boot no **SD card 32 GB**; **SSD 224 GB** na porta **USB 3.0**.
 
 **Referência:** [Raspberry Pi 4 Model B](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/)
 
