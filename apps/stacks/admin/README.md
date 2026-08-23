@@ -4,7 +4,7 @@ Stack de ferramentas administrativas do home server. Reúne o proxy reverso de e
 
 ## Arquitetura de rede
 
-Os serviços desta stack (e das demais stacks no Raspberry Pi 5) deixam de publicar portas no host. O tráfego HTTP/HTTPS chega pelo **Nginx Proxy Manager**, que roteia pelo nome do container na rede Docker compartilhada `proxy_network`.
+Os serviços desta stack (e das demais stacks no Raspberry Pi 5) não publicam portas no host. No [Cloudflare](https://www.cloudflare.com/) foi criado um registro DNS com subdominio do tipo ***.local.meudominio.me** apontando para o IP estático local do RaspBerry Pi 5 **10.0.0.139** onde o tráfego HTTP/HTTPS chega ao **Nginx Proxy Manager**, que roteia pelo nome do container na rede Docker compartilhada `proxy_network`.
 
 ```
 Internet / LAN
@@ -41,6 +41,8 @@ No painel (`http://<host>:81`), cada Proxy Host deve usar o **nome do container*
 | `80` | HTTP público |
 | `443` | HTTPS público |
 | `81` | Painel de administração do NPM |
+
+![Rotas Nginx Proxy Manager](../../../shared/npm.png)
 
 **Referência:** [Nginx Proxy Manager — Documentação](https://nginxproxymanager.com/guide/)
 
