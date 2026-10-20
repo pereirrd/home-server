@@ -1,7 +1,7 @@
 # Raspberry Pi 5
 
 
-Placa principal da infraestrutura. Roda [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/), hospedando o [Portainer](../apps/portainer/README.md) e as [stacks Docker](../apps/stacks/admin/README.md).
+Placa principal da infraestrutura de containers. Roda [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/), hospedando o [Portainer](../../../../apps/portainer/README.md) e as [stacks Docker](../../../../apps/stacks/admin/README.md).
 
 ### Especificações da placa
 
@@ -9,15 +9,16 @@ O [Raspberry Pi 5](https://www.raspberrypi.com/products/raspberry-pi-5/) traz: C
 
 ### Expansão PCIe — topologia
 
-O setup atual utiliza o case **Argon One v3 M.2 NVMe PCIE**, que integra um HAT PCIe para conexão direta de armazenamento NVMe. O disco de boot é conectado diretamente ao HAT PCIe do case, enquanto o armazenamento de massa é gerenciado via USB 3.0.
+O setup atual utiliza o case **Argon One v3 M.2 NVMe PCIE**, que integra um HAT PCIe para conexão direta de armazenamento NVMe. O disco de boot (e único disco deste nó) está no slot M.2 do case.
 
 ```
 Raspberry Pi 5
     │
     └── Argon One v3 M.2 NVMe PCIE Case
-        ├── Slot M.2 NVMe → M.2 NVMe [sistema operacional]
-        └── Porta USB 3.0 → Hub USB com Fonte → HDD 1TB
+        └── Slot M.2 NVMe → NVMe 256 GB [sistema operacional + containers]
 ```
+
+> **Mudança de topologia:** o HDD de 1 TB que antes ficava no Pi 5 via hub USB com fonte externa foi removido deste nó. O armazenamento em massa passou para o [Dell OptiPlex 3050 Micro](../../../dell/README.md). O Raspberry Pi 5 permanece **somente com o M.2 de 256 GB**, rodando o SO e alguns containers Docker.
 
 #### Argon One v3 M.2 NVMe PCIE Case
 
@@ -25,34 +26,48 @@ Case compacto que inclui um HAT PCIe dedicado para expansão de alta velocidade.
 
 - **Manual:** [Argon One v3 Case and M.2 NVMe PCIE Case Manual](https://argon40.com/blogs/argon-resources/argon-one-v3-case-and-m-2-nvme-pcie-case-manual)
 
-#### Armazenamento — NVMe (boot)
+#### Armazenamento — NVMe (boot + containers)
 
-O disco de boot está montado diretamente no slot M.2 NVMe integrado ao case Argon One v3.
+O disco está montado diretamente no slot M.2 NVMe integrado ao case Argon One v3.
 
 | Item | Detalhe |
 | ---- | ------- |
-| **Disco** | M.2 NVMe |
-| **Função** | Sistema operacional (boot) |
+| **Disco** | M.2 NVMe 256 GB |
+| **Função** | Sistema operacional (boot) e containers Docker |
 | **Conexão** | Slot M.2 NVMe via HAT PCIe |
-
-#### Armazenamento — HDD (massa)
-
-O HDD de 1TB é conectado através de um hub USB com alimentação externa.
-
-| Item | Detalhe |
-| ---- | ------- |
-| **Disco** | HDD 2.5" 1 TB |
-| **Função** | Armazenamento em massa |
-| **Conexão** | Hub USB 3.0 com fonte externa |
-
-> **Nota sobre a alimentação:** O uso de um hub USB com fonte de alimentação própria é obrigatório para o HDD de 1TB. Isso ocorre devido às limitações de corrente das portas USB do Raspberry Pi 5, que não conseguem suprir a alta demanda de energia de discos rígidos de grande capacidade de forma estável.
 
 ### Resumo do Setup Atual
 
 | Disco | Interface | Capacidade | Função |
 | ----- | --------- | ---------- | ------ |
-| M.2 NVMe | PCIe (Argon One v3) | - | Sistema operacional |
-| HDD 2.5" | USB 3.0 (via Hub com fonte) | 1 TB | Armazenamento em massa |
+| M.2 NVMe | PCIe (Argon One v3) | 256 GB | Sistema operacional + containers |
+
+### Containers em execução
+
+Hostname na rede: **`raspberrypi`** (este é o **Raspberry Pi 5**). Inventário a partir de `docker compose ls` / `docker ps`. O Raspberry Pi 4 (Home Assistant) **não** está incluído nesta lista.
+
+Este host concentra o **NPM de entrada** da LAN (`*.local` → IP estático **10.0.0.139**): proxy direto para containers locais e repasse ao NPM do Dell quando a app está no x86. Também tem túnel Cloudflare próprio. Ver [estratégia entre NPMs](../../../../apps/stacks/admin/README.md#estratégia-de-comunicação-entre-os-npms).
+
+| Stack / origem | Containers | Papel |
+| -------------- | ---------- | ----- |
+| **portainer** | `portainer` | **Único** Portainer CE da infra — gerencia o Docker local e o Dell via Agent |
+| **admin** | `nginx-proxy-manager`, `cloudflared_tunnel`, `filebrowser`, `portainer-backup`, `portainer-mcp` | Proxy, túnel, Filebrowser, backup e MCP do Portainer |
+| **games** | `romm`, `romm-db` | Gerenciador de ROMs |
+| **immich** | `immich_server`, `immich_machine_learning`, `immich_postgres`, `immich_redis` | Fotos e vídeos |
+| **telemetria** | `telemetria-grafana-1`, `telemetria-influxdb-1`, `telemetria-mosquitto-1`, `telemetria-telegraf-1` | Observabilidade (Grafana, InfluxDB, Mosquitto, Telegraf) |
+
+```
+raspberrypi (Pi 5)
+├── portainer                → Portainer CE (compose standalone)
+├── admin                    → NPM, Cloudflare Tunnel, Filebrowser, portainer-backup, portainer-mcp
+├── games                    → RomM + MariaDB
+├── immich                   → Immich (server, ML, Postgres, Redis/Valkey)
+└── telemetria               → Grafana + InfluxDB + Mosquitto + Telegraf
+```
+
+A stack **stream** e o **Seafile** rodam no [Dell OptiPlex 3050 Micro](../../../dell/README.md) (`dell3050`), não neste nó.
+
+Documentação: [Portainer](../../../../apps/portainer/README.md) · [admin](../../../../apps/stacks/admin/README.md) · [games](../../../../apps/stacks/games/README.md) · [immich](../../../../apps/stacks/immich/README.md) · [telemetria](../../../../apps/stacks/telemetria/README.md).
 
 ---
 
@@ -63,6 +78,9 @@ O HDD de 1TB é conectado através de um hub USB com alimentação externa.
 
 ### Comparativo de Periféricos
 - [Configuração v1 (Waveshare + Geekworm)](../v1/README.md)
+
+### Outros nós
+- [Dell OptiPlex 3050 Micro](../../../dell/README.md) — HDD 1 TB (stream, seafile, admin, portainer-agent)
 
 ### Imagens do Hardware
 ![Frontal](../../../../shared/raspberrypi5/v2/front.jpg)

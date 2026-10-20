@@ -1,26 +1,84 @@
 # Admin
 
-Stack de ferramentas administrativas do home server. Reúne o proxy reverso de entrada, o backup do gerenciador de containers e o túnel seguro para expor serviços internos à internet.
+Stack de ferramentas administrativas do home server. Reúne o proxy reverso, o backup do gerenciador de containers, o túnel Cloudflare e o [Filebrowser](https://filebrowser.org/).
 
-## Arquitetura de rede
+**Onde roda:** a stack `admin` existe nos **dois** hosts Docker, com conjuntos de apps **diferentes**:
 
-Os serviços desta stack (e das demais stacks no Raspberry Pi 5) não publicam portas no host. No [Cloudflare](https://www.cloudflare.com/) foi criado um registro DNS com subdominio do tipo ***.local.meudominio.me** apontando para o IP estático local do RaspBerry Pi 5 **10.0.0.139** onde o tráfego HTTP/HTTPS chega ao **Nginx Proxy Manager**, que roteia pelo nome do container na rede Docker compartilhada `proxy_network`.
+| Host | Hostname | Apps na stack `admin` |
+| ---- | -------- | --------------------- |
+| Raspberry Pi 5 | `raspberrypi` | NPM, Cloudflare Tunnel, Filebrowser, portainer-backup, **portainer-mcp** |
+| Dell OptiPlex 3050 Micro | `dell3050` | NPM, Cloudflare Tunnel, Filebrowser, portainer-backup |
+
+Cada nó tem a própria rede Docker (`proxy_network` local àquele host). Containers do Pi 5 **não** resolvem por nome containers do Dell (e vice-versa) — por isso o proxy entre máquinas passa pelos NPMs, não pela rede Compose compartilhada.
+
+## Estratégia de comunicação entre os NPMs
+
+Há **dois Nginx Proxy Managers**, um em cada máquina. Os papéis são distintos:
+
+| Papel | Host | Função |
+| ----- | ---- | ------ |
+| **NPM de entrada (fronteira)** | Raspberry Pi 5 (`raspberrypi`, IP estático **10.0.0.139**) | Único ponto de entrada do domínio **local** (`*.local.meudominio.me`). Decide se a app está no próprio Pi 5 ou no Dell. |
+| **NPM do Dell (nó remoto)** | `dell3050` | Recebe o repasse do NPM do Pi 5 e entrega a requisição aos containers da `proxy_network` **local do Dell** (stream, seafile, etc.). |
+
+### Domínio local — fluxo pelo Pi 5
+
+No DNS da LAN (ou hosts), o registro do tipo **`*.local.meudominio.me`** aponta para o **Pi 5**. Todo acesso “pela rede de casa” chega primeiro ao NPM de entrada:
+
+1. **App no Pi 5** (RomM, Immich, Portainer, Grafana, …) — o NPM do Pi 5 encaminha direto para o **nome do container** na `proxy_network` local (ex.: `http://immich_server:2283`).
+2. **App no Dell** (Jellyfin, Seerr, Seafile, …) — o NPM do Pi 5 **não** alcança esses containers por nome Docker. Em vez disso, o Proxy Host no Pi 5 aponta para o **NPM do Dell** (IP/hostname LAN do `dell3050`, portas `80`/`443`). O NPM do Dell, que enxerga a `proxy_network` daquela máquina, completa o roteamento até o container (ex.: `http://jellyfin:8096`).
 
 ```
-Internet / LAN
-      │
-      ▼
-Nginx Proxy Manager  (portas 80, 443 e painel 81 no host)
-      │
-      │  proxy_network (externa, compartilhada)
-      ├── jellyfin, seerr, sonarr, …   (stack stream)
-      ├── romm                         (stack games)
-      ├── portainer
-      ├── cloudflared
-      └── portainer-backup
+Cliente (LAN)  →  *.local.meudominio.me  →  NPM Pi 5 (10.0.0.139)
+                                              │
+                    ┌─────────────────────────┼─────────────────────────┐
+                    ▼                         ▼                         │
+           App no Pi 5                  App no Dell                     │
+           (proxy_network Pi 5)         NPM Dell (LAN)                  │
+                                        → proxy_network Dell            │
+                                          → jellyfin, seafile, …        │
 ```
 
-Antes do primeiro deploy, a rede externa precisa existir:
+Em outras palavras: o NPM do Pi 5 é o **roteador de hostnames** da casa; o NPM do Dell é um **hop interno** só quando o destino vive no x86.
+
+### Internet — dois túneis Cloudflare
+
+Os **dois** hosts têm `cloudflared` na stack admin. Cada um mantém um túnel Cloudflare e pode expor apps à internet **sem abrir portas de entrada** no roteador. O túnel de cada máquina tipicamente aponta para o **NPM daquele mesmo host** (`http://nginx-proxy-manager:80` na `proxy_network` local), e as rotas públicas são configuradas no dashboard da Cloudflare por hostname.
+
+Isso é independente do fluxo `*.local`:
+
+- **Acesso local** → sempre via NPM do Pi 5 (com repasse ao Dell quando necessário).
+- **Acesso pela internet** → via o túnel da máquina onde a app (ou o NPM de destino) está publicado na Cloudflare.
+
+### Por que essa estratégia
+
+- Mantém um **único DNS local** e um **único NPM de entrada** na LAN.
+- Evita publicar todas as portas das apps do Dell na rede; só o NPM do Dell precisa ser alcançável pelo Pi 5.
+- Cada Docker host continua com sua `proxy_network` isolada — sem overlay multi-host.
+- Os túneis Cloudflare permitem expor serviços de qualquer um dos nós sem mudar o desenho local.
+
+## Arquitetura de rede (por host)
+
+Nos containers de cada máquina, em geral **não** se publicam portas no host — exceto o NPM (`80`, `443`, `81`). O tráfego HTTP/HTTPS entre apps do **mesmo** host usa a rede externa `proxy_network` daquele host.
+
+```
+── raspberrypi (Pi 5) ────────────────────────────
+proxy_network (local)
+  ├── nginx-proxy-manager   ← entrada *.local + destino de apps locais
+  ├── cloudflared
+  ├── filebrowser, portainer-backup, portainer-mcp
+  ├── portainer, romm, immich_*, grafana, …
+  └── (repasse LAN) ──► NPM do dell3050
+
+── dell3050 ──────────────────────────────────────
+proxy_network (local)
+  ├── nginx-proxy-manager   ← recebe repasse do Pi 5 / túnel Cloudflare deste nó
+  ├── cloudflared
+  ├── filebrowser, portainer-backup
+  ├── jellyfin, seerr, sonarr, … (stream)
+  └── seafile, seadoc, …
+```
+
+Antes do primeiro deploy em cada host, a rede externa precisa existir **naquele** Docker:
 
 ```bash
 docker network create proxy_network
@@ -32,19 +90,38 @@ Cada stack também mantém uma rede local (`admin_default`, `stream_network`, et
 
 ### Nginx Proxy Manager
 
-O [Nginx Proxy Manager](https://nginxproxymanager.com/) (NPM) é a **única** aplicação desta infraestrutura que publica portas no host (`80`, `443` e `81`). Ele assume o roteamento HTTP/HTTPS e o gerenciamento de certificados (Let's Encrypt), apontando cada hostname para o serviço correspondente via nome DNS interno do Docker (por exemplo, `http://jellyfin:8096`).
+O [Nginx Proxy Manager](https://nginxproxymanager.com/) (NPM) publica as portas `80`, `443` e `81` no host. Assume o roteamento HTTP/HTTPS e o gerenciamento de certificados (Let's Encrypt).
 
-No painel (`http://<host>:81`), cada Proxy Host deve usar o **nome do container** como Forward Hostname e a porta **interna** do serviço (não a antiga porta mapeada no host).
+**No Pi 5 (entrada):**
+
+| Destino da app | Forward Hostname no Proxy Host | Exemplo |
+| -------------- | ------------------------------ | ------- |
+| Container local | Nome do container na `proxy_network` do Pi 5 | `http://immich_server:2283` |
+| Container no Dell | IP/hostname LAN do `dell3050` (NPM remoto) | `http://<ip-dell3050>:80` (o NPM do Dell faz o resto) |
+
+**No Dell (nó remoto):** os Proxy Hosts apontam para o **nome do container** na `proxy_network` local (ex.: `http://jellyfin:8096`, `http://seafile:80`), como em um setup de host único.
+
+No painel (`http://<host>:81`), use sempre a porta **interna** do serviço (não uma porta antiga mapeada no host), salvo no caso do hop Pi 5 → Dell, em que o destino é o próprio NPM remoto.
 
 | Porta no host | Uso |
 | --- | --- |
-| `80` | HTTP público |
-| `443` | HTTPS público |
+| `80` | HTTP |
+| `443` | HTTPS |
 | `81` | Painel de administração do NPM |
 
 ![Rotas Nginx Proxy Manager](../../../shared/npm.png)
 
 **Referência:** [Nginx Proxy Manager — Documentação](https://nginxproxymanager.com/guide/)
+
+### Filebrowser
+
+O [Filebrowser](https://filebrowser.org/) expõe uma interface web para navegar e gerenciar arquivos no host (uploads, downloads, edição básica). Presente na stack `admin` em ambos os nós (`raspberrypi` e `dell3050`).
+
+**Referência:** [Filebrowser](https://filebrowser.org/)
+
+### Portainer MCP (somente Pi 5)
+
+No host `raspberrypi`, a stack admin inclui também o `portainer-mcp` (`portainer/portainer-mcp`), complementar ao Portainer CE.
 
 ### Portainer Backup
 
@@ -58,7 +135,7 @@ Nesta stack, o container roda no modo `schedule`, executando backups de forma co
 
 O [Cloudflare Tunnel](https://developers.cloudflare.com/tunnel/) conecta serviços locais à rede global da Cloudflare por meio de conexões criptografadas apenas de saída, sem expor IP público nem abrir portas de entrada no firewall. O daemon `cloudflared` mantém um túnel persistente com a Cloudflare, permitindo mapear hostnames públicos para serviços internos.
 
-Nesta stack, o `cloudflared` também participa da `proxy_network`. O destino típico das rotas no dashboard da Cloudflare é o próprio Nginx Proxy Manager (`http://nginx-proxy-manager:80`), de modo que o roteamento por hostname continue centralizado no NPM. Alternativamente, o túnel pode apontar direto para um container na mesma rede.
+Há um `cloudflared` em **cada** host (`raspberrypi` e `dell3050`), cada um com o próprio túnel/token. Em ambos, o container participa da `proxy_network` local e o destino típico das rotas no dashboard da Cloudflare é o NPM **daquele** host (`http://nginx-proxy-manager:80`). Assim cada máquina publica na internet o que faz sentido expor a partir dela, enquanto o acesso **local** continua centralizado no NPM do Pi 5 (ver [estratégia entre NPMs](#estratégia-de-comunicação-entre-os-npms)).
 
 **Referência:** [Cloudflare Tunnel — Documentação oficial](https://developers.cloudflare.com/tunnel/)
 

@@ -2,7 +2,11 @@
 
 Stack de mídia e streaming do home server, baseada no ecossistema **\*Arr** — conjunto popular de aplicações open source e self-hosted para automatizar a aquisição, organização e reprodução de conteúdo audiovisual.
 
+**Onde roda:** [Dell OptiPlex 3050 Micro](../../../hardware/dell/README.md) (`dell3050`), aproveitando o HDD de 1 TB. Não roda mais no Raspberry Pi 5.
+
 > **Importante:** este repositório contém apenas um **exemplo funcional** da stack. A integração correta entre os serviços (indexadores, clientes de download, paths de volume, perfis de qualidade, nomenclatura de arquivos etc.) depende de configuração detalhada. **Consulte sempre a documentação oficial** de cada aplicação para montar a pipeline de ponta a ponta.
+
+Em produção a stack inclui **Jackett e Prowlarr** (além de Jellyfin, Seerr, Sonarr, Radarr, Bazarr e qBittorrent).
 
 ## Arquitetura de rede
 
@@ -73,7 +77,7 @@ Nesta stack, configuração persistida em `RADARR_CONFIG_PATH`, com acesso à m�
 
 **Gerenciador central de indexadores** do ecossistema Servarr. Configura trackers e sites de busca uma única vez e sincroniza com Sonarr, Radarr, Lidarr e demais apps *Arr — eliminando a necessidade de repetir credenciais e URLs em cada serviço.
 
-> **Nota sobre esta stack:** a implementação atual usa **Jackett** no lugar do Prowlarr. Ambos cumprem o papel de proxy de indexadores; o Prowlarr é a solução mais moderna e integrada do ecossistema Servarr. Consulte a documentação oficial do Prowlarr se for migrar ou configurar do zero.
+> **Nota sobre esta stack:** em produção no Dell rodam **Jackett e Prowlarr**. O `docker-compose` de exemplo neste repositório pode listar só um deles — alinhe o compose local ao inventário real do host.
 
 ### Bazarr
 
