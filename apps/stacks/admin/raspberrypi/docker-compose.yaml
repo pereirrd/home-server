@@ -1,0 +1,98 @@
+version: '3.8'
+
+services:
+
+  # Web file browser
+  filebrowser:
+    image: filebrowser/filebrowser
+    container_name: filebrowser
+    user: "1000:1000"
+    volumes:
+      - ${FILEBROWSER_SRV_PATH}:/srv
+      - ${FILEBROWSER_DATABASE_PATH}:/database
+      - ${FILEBROWSER_CONFIG_PATH}:/config
+    restart: unless-stopped
+    networks:
+      - admin_default
+      - proxy_network
+
+  # MCP para o Portainer
+  portainer-mcp:
+    image: portainer/portainer-mcp:2.45
+    container_name: portainer-mcp
+    restart: unless-stopped
+    environment:
+      PORTAINER_URL: ${PORTAINER_URL}
+      PORTAINER_MCP_AUTH_TOKEN: ${PORTAINER_MCP_AUTH_TOKEN}
+      PORTAINER_MCP_TRANSPORT: ${PORTAINER_MCP_TRANSPORT}
+      PORTAINER_MCP_HTTP_HOST: ${PORTAINER_MCP_HTTP_HOST}
+      PORTAINER_MCP_HTTP_PORT: ${PORTAINER_MCP_HTTP_PORT}
+      PORTAINER_READ_ONLY: ${PORTAINER_READ_ONLY}
+      PORTAINER_TIMEOUT: ${PORTAINER_TIMEOUT}
+      PORTAINER_MCP_ALLOWED_HOSTS: ${PORTAINER_MCP_ALLOWED_HOSTS}
+      PORTAINER_MCP_LOG_LEVEL: ${PORTAINER_MCP_LOG_LEVEL}
+      PORTAINER_MCP_LOG_FORMAT: ${PORTAINER_MCP_LOG_FORMAT}
+      PORTAINER_MCP_FORWARDED_ALLOW_IPS: ${PORTAINER_MCP_FORWARDED_ALLOW_IPS}
+      # O NPM faz o SSL termination — plaintext HTTP entre NPM e o container é intencional
+      PORTAINER_MCP_DANGEROUSLY_ALLOW_PLAINTEXT_HTTP: ${PORTAINER_MCP_DANGEROUSLY_ALLOW_PLAINTEXT_HTTP}
+    networks:
+      - admin_default
+      - proxy_network
+
+  # Automação de backup para configurações e banco de dados do Portainer
+  portainer-backup:
+    image: savagesoftware/portainer-backup:latest
+    container_name: portainer-backup
+    restart: unless-stopped
+    command: schedule
+    environment:
+      TZ: ${TZ}
+      PUID: ${PUID}
+      PGID: ${PGID}
+      PORTAINER_BACKUP_URL: ${PORTAINER_URL}
+      PORTAINER_BACKUP_TOKEN: ${PORTAINER_BACKUP_TOKEN}
+      PORTAINER_BACKUP_OVERWRITE: ${PORTAINER_BACKUP_OVERWRITE}
+      PORTAINER_BACKUP_SCHEDULE: ${PORTAINER_BACKUP_SCHEDULE}
+      PORTAINER_BACKUP_STACKS: ${PORTAINER_BACKUP_STACKS}
+      PORTAINER_BACKUP_DRYRUN: ${PORTAINER_BACKUP_DRYRUN}
+      PORTAINER_BACKUP_CONCISE: ${PORTAINER_BACKUP_CONCISE}
+      PORTAINER_BACKUP_DIRECTORY: ${PORTAINER_BACKUP_DIRECTORY}
+      PORTAINER_BACKUP_FILENAME: ${PORTAINER_BACKUP_FILENAME}
+    volumes:
+      - ${PORTAINER_BACKUP_HOST_PATH}:/backup:rw
+    networks:
+      - admin_default
+      - proxy_network
+
+  # Cloudflare tunnel
+  cloudflared:
+    image: cloudflare/cloudflared:latest
+    container_name: cloudflared_tunnel
+    command: tunnel --no-autoupdate run --token ${CLOUDFLARED_TUNNEL_TOKEN}
+    restart: always
+    networks:
+      - admin_default
+      - proxy_network
+
+  # Proxy manager (entrada da LAN — *.local)
+  nginx:
+    image: jc21/nginx-proxy-manager:latest
+    container_name: nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      - '80:80'      # Porta pública HTTP (NPM assume o controle)
+      - '443:443'    # Porta pública HTTPS (NPM assume o controle)
+      - '81:81'      # Porta do Painel de Administração do NPM
+      - '1883:1883'  # MQTT (ex.: Mosquitto da stack telemetria)
+    volumes:
+      - ${NGINX_PROXY_DATA_PATH}:/data
+      - ${NGINX_PROXY_LETSENCRYPT_PATH}:/etc/letsencrypt
+    networks:
+      - admin_default
+      - proxy_network
+
+networks:
+  admin_default:
+    driver: bridge
+  proxy_network:
+    external: true

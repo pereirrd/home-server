@@ -4,12 +4,28 @@ Stack de ferramentas administrativas do home server. Reúne o proxy reverso, o b
 
 **Onde roda:** a stack `admin` existe nos **dois** hosts Docker, com conjuntos de apps **diferentes**:
 
-| Host | Hostname | Apps na stack `admin` |
-| ---- | -------- | --------------------- |
-| Raspberry Pi 5 | `raspberrypi` | NPM, Cloudflare Tunnel, Filebrowser, portainer-backup, **portainer-mcp** |
-| Dell OptiPlex 3050 Micro | `dell3050` | NPM, Cloudflare Tunnel, Filebrowser, portainer-backup |
+| Host | Hostname | Apps na stack `admin` | Compose neste repo |
+| ---- | -------- | --------------------- | ------------------ |
+| Raspberry Pi 5 | `raspberrypi` | NPM (entrada + MQTT `1883`), Cloudflare Tunnel, Filebrowser, portainer-backup, **portainer-mcp** | [`raspberrypi/`](./raspberrypi/) |
+| Dell OptiPlex 3050 Micro | `dell3050` | NPM, Cloudflare Tunnel, Filebrowser, portainer-backup | [`dell/`](./dell/) |
 
 Cada nó tem a própria rede Docker (`proxy_network` local àquele host). Containers do Pi 5 **não** resolvem por nome containers do Dell (e vice-versa) — por isso o proxy entre máquinas passa pelos NPMs, não pela rede Compose compartilhada.
+
+### Arquivos de exemplo
+
+```
+apps/stacks/admin/
+├── README.md
+├── docker-compose.yaml       # esqueleto genérico legado
+├── env.example
+├── raspberrypi/              # produção no Pi 5 (entrada *.local + MCP + MQTT)
+│   ├── docker-compose.yaml
+│   └── env.example
+└── dell/                     # produção no dell3050
+    ├── docker-compose.yaml
+    └── env.example
+```
+
 
 ## Estratégia de comunicação entre os NPMs
 
@@ -17,7 +33,7 @@ Há **dois Nginx Proxy Managers**, um em cada máquina. Os papéis são distinto
 
 | Papel | Host | Função |
 | ----- | ---- | ------ |
-| **NPM de entrada (fronteira)** | Raspberry Pi 5 (`raspberrypi`, IP estático **10.0.0.139**) | Único ponto de entrada do domínio **local** (`*.local.meudominio.me`). Decide se a app está no próprio Pi 5 ou no Dell. |
+| **NPM de entrada (fronteira)** | Raspberry Pi 5 (`raspberrypi`, IP estático **10.0.0.x**) | Único ponto de entrada do domínio **local** (`*.local.meudominio.me`). Decide se a app está no próprio Pi 5 ou no Dell. |
 | **NPM do Dell (nó remoto)** | `dell3050` | Recebe o repasse do NPM do Pi 5 e entrega a requisição aos containers da `proxy_network` **local do Dell** (stream, seafile, etc.). |
 
 ### Domínio local — fluxo pelo Pi 5
@@ -28,7 +44,7 @@ No DNS da LAN (ou hosts), o registro do tipo **`*.local.meudominio.me`** aponta 
 2. **App no Dell** (Jellyfin, Seerr, Seafile, …) — o NPM do Pi 5 **não** alcança esses containers por nome Docker. Em vez disso, o Proxy Host no Pi 5 aponta para o **NPM do Dell** (IP/hostname LAN do `dell3050`, portas `80`/`443`). O NPM do Dell, que enxerga a `proxy_network` daquela máquina, completa o roteamento até o container (ex.: `http://jellyfin:8096`).
 
 ```
-Cliente (LAN)  →  *.local.meudominio.me  →  NPM Pi 5 (10.0.0.139)
+Cliente (LAN)  →  *.local.meudominio.me  →  NPM Pi 5 (10.0.0.x)
                                               │
                     ┌─────────────────────────┼─────────────────────────┐
                     ▼                         ▼                         │
@@ -103,11 +119,12 @@ O [Nginx Proxy Manager](https://nginxproxymanager.com/) (NPM) publica as portas 
 
 No painel (`http://<host>:81`), use sempre a porta **interna** do serviço (não uma porta antiga mapeada no host), salvo no caso do hop Pi 5 → Dell, em que o destino é o próprio NPM remoto.
 
-| Porta no host | Uso |
-| --- | --- |
-| `80` | HTTP |
-| `443` | HTTPS |
-| `81` | Painel de administração do NPM |
+| Porta no host | Uso | Onde |
+| --- | --- | --- |
+| `80` | HTTP | Pi 5 e Dell |
+| `443` | HTTPS | Pi 5 e Dell |
+| `81` | Painel de administração do NPM | Pi 5 e Dell |
+| `1883` | MQTT (ex.: Mosquitto da [telemetria](../telemetria/README.md)) | **somente Pi 5** |
 
 ![Rotas Nginx Proxy Manager](../../../shared/npm.png)
 
@@ -121,7 +138,9 @@ O [Filebrowser](https://filebrowser.org/) expõe uma interface web para navegar 
 
 ### Portainer MCP (somente Pi 5)
 
-No host `raspberrypi`, a stack admin inclui também o `portainer-mcp` (`portainer/portainer-mcp`), complementar ao Portainer CE.
+No host `raspberrypi`, a stack admin inclui o [`portainer-mcp`](https://docs.portainer.io/) (`portainer/portainer-mcp:2.45`), expondo ferramentas MCP sobre a API do Portainer CE local (`PORTAINER_URL=http://portainer:9000`).
+
+Transporte HTTP na porta interna `PORTAINER_MCP_HTTP_PORT` (padrão `17717`). O acesso externo passa pelo NPM com **SSL termination**; por isso `PORTAINER_MCP_DANGEROUSLY_ALLOW_PLAINTEXT_HTTP=1` entre NPM e o container. Ajuste `PORTAINER_MCP_ALLOWED_HOSTS` e `PORTAINER_MCP_FORWARDED_ALLOW_IPS` ao hostname e à faixa da `proxy_network`.
 
 ### Portainer Backup
 
@@ -141,14 +160,31 @@ Há um `cloudflared` em **cada** host (`raspberrypi` e `dell3050`), cada um com 
 
 ## Configuração
 
-Copie `env.example` para `.env` e preencha as variáveis antes de subir a stack:
+### Raspberry Pi 5 (`raspberrypi`)
+
+Compose e variáveis em [`raspberrypi/`](./raspberrypi/). NPM de **entrada** da LAN; inclui Filebrowser, portainer-mcp, backup, tunnel e publicação da porta **MQTT `1883`**.
 
 | Variável | Descrição |
 | --- | --- |
-| `PORTAINER_BACKUP_URL` | URL base do Portainer (ex.: `http://portainer:9000`) |
-| `PORTAINER_BACKUP_TOKEN` | Access token de um usuário administrador |
-| `PORTAINER_BACKUP_SCHEDULE` | Expressão cron do agendamento (6 campos) |
-| `PORTAINER_BACKUP_HOST_PATH` | Diretório no host onde os backups são salvos |
-| `CLOUDFLARED_TUNNEL_TOKEN` | Token do túnel criado no dashboard Cloudflare |
-| `NGINX_PROXY_DATA_PATH` | Diretório no host para dados do NPM (`/data`) |
-| `NGINX_PROXY_LETSENCRYPT_PATH` | Diretório no host para certificados Let's Encrypt |
+| `PORTAINER_URL` | URL do Portainer CE local (`http://portainer:9000`) — usada pelo backup e pelo MCP |
+| `PORTAINER_MCP_*` | Transporte, porta, hosts permitidos, log e plaintext HTTP atrás do NPM |
+| `PORTAINER_BACKUP_TOKEN` / `PORTAINER_BACKUP_*` | Agendamento e destino do backup |
+| `CLOUDFLARED_TUNNEL_TOKEN` | Token do túnel Cloudflare **deste** host |
+| `FILEBROWSER_*` | Raiz `/srv` e paths de database/config no host |
+| `NGINX_PROXY_*` | Dados e Let's Encrypt do NPM |
+
+### Dell (`dell3050`)
+
+Compose e variáveis em [`dell/`](./dell/). Sem MCP e sem porta MQTT no NPM.
+
+| Variável | Descrição |
+| --- | --- |
+| `CLOUDFLARED_TUNNEL_TOKEN` | Token do túnel Cloudflare **deste** host |
+| `PORTAINER_URL` | URL do Portainer CE no Pi 5 (alcançável pela LAN) |
+| `PORTAINER_BACKUP_*` / `FILEBROWSER_*` / `NGINX_PROXY_*` | Idem ao Pi 5, paths locais do Dell |
+
+Antes do deploy em cada host: `docker network create proxy_network` (se ainda não existir).
+
+### Exemplo genérico (raiz)
+
+O `docker-compose.yaml` / `env.example` na raiz são um esqueleto legado. Prefira [`raspberrypi/`](./raspberrypi/) e [`dell/`](./dell/) conforme o nó.

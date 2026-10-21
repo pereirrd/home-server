@@ -46,7 +46,7 @@ O disco está montado diretamente no slot M.2 NVMe integrado ao case Argon One v
 
 Hostname na rede: **`raspberrypi`** (este é o **Raspberry Pi 5**). Inventário a partir de `docker compose ls` / `docker ps`. O Raspberry Pi 4 (Home Assistant) **não** está incluído nesta lista.
 
-Este host concentra o **NPM de entrada** da LAN (`*.local` → IP estático **10.0.0.139**): proxy direto para containers locais e repasse ao NPM do Dell quando a app está no x86. Também tem túnel Cloudflare próprio. Ver [estratégia entre NPMs](../../../../apps/stacks/admin/README.md#estratégia-de-comunicação-entre-os-npms).
+Este host concentra o **NPM de entrada** da LAN (`*.local` → IP estático **10.0.0.x**): proxy direto para containers locais e repasse ao NPM do Dell quando a app está no x86. Também tem túnel Cloudflare próprio. Ver [estratégia entre NPMs](../../../../apps/stacks/admin/README.md#estratégia-de-comunicação-entre-os-npms).
 
 | Stack / origem | Containers | Papel |
 | -------------- | ---------- | ----- |
@@ -67,7 +67,7 @@ raspberrypi (Pi 5)
 
 A stack **stream** e o **Seafile** rodam no [Dell OptiPlex 3050 Micro](../../../dell/README.md) (`dell3050`), não neste nó.
 
-Documentação: [Portainer](../../../../apps/portainer/README.md) · [admin](../../../../apps/stacks/admin/README.md) · [games](../../../../apps/stacks/games/README.md) · [immich](../../../../apps/stacks/immich/README.md) · [telemetria](../../../../apps/stacks/telemetria/README.md).
+Documentação: [Portainer](../../../../apps/portainer/README.md) · [admin](../../../../apps/stacks/admin/README.md) · [compose admin no Pi 5](../../../../apps/stacks/admin/raspberrypi/) · [games](../../../../apps/stacks/games/README.md) · [immich](../../../../apps/stacks/immich/README.md) · [telemetria](../../../../apps/stacks/telemetria/) (compose + env).
 
 ---
 

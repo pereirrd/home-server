@@ -63,7 +63,7 @@ dell3050
 └── seafile                  → Seafile + Seadoc + MariaDB + Redis
 ```
 
-Documentação das stacks: [admin](../../apps/stacks/admin/README.md) · [stream](../../apps/stacks/stream/README.md) · [seafile](../../apps/stacks/seafile/README.md). Inventário do Pi 5: [pi5/v2](../raspberry_pi/pi5/v2/README.md).
+Documentação das stacks: [admin](../../apps/stacks/admin/README.md) · [compose admin no Dell](../../apps/stacks/admin/dell/) · [stream](../../apps/stacks/stream/README.md) · [seafile](../../apps/stacks/seafile/) (compose + env). Inventário do Pi 5: [pi5/v2](../raspberry_pi/pi5/v2/README.md).
 
 ---
 

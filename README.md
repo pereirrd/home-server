@@ -60,7 +60,7 @@ Home Assistant (Pi 4)    → monitoramento, HACS (AdGuard removido)
 Automations ESP32        → proxies Bluetooth para o HA
 ```
 
-Cada host tem sua própria `proxy_network`. O **NPM de entrada** é o do **Pi 5** (`*.local` → `10.0.0.139`): apps locais vão direto aos containers; apps no Dell são **repassadas ao NPM do `dell3050`**. Os dois nós têm túnel Cloudflare para exposição na internet. Detalhes: [estratégia entre NPMs](apps/stacks/admin/README.md#estratégia-de-comunicação-entre-os-npms).
+Cada host tem sua própria `proxy_network`. O **NPM de entrada** é o do **Pi 5** (`*.local` → `10.0.0.x`): apps locais vão direto aos containers; apps no Dell são **repassadas ao NPM do `dell3050`**. Os dois nós têm túnel Cloudflare para exposição na internet. Detalhes: [estratégia entre NPMs](apps/stacks/admin/README.md#estratégia-de-comunicação-entre-os-npms).
 
 | Área               | Função / host                                             |
 | ------------------ | --------------------------------------------------------- |
@@ -94,8 +94,8 @@ Cada host tem sua própria `proxy_network`. O **NPM de entrada** é o do **Pi 5*
 
 | Stack                                          | Host | Descrição |
 | ---------------------------------------------- | ---- | --------- |
-| [admin](apps/stacks/admin/README.md)           | Pi 5 + Dell | NPM, Cloudflare Tunnel, Filebrowser, portainer-backup (+ MCP no Pi 5) |
-| [stream](apps/stacks/stream/README.md)         | Dell | *Arr + Jellyfin + Seerr + qBittorrent (Jackett e Prowlarr) |
+| [admin](apps/stacks/admin/README.md) ([pi](apps/stacks/admin/raspberrypi/) · [dell](apps/stacks/admin/dell/)) | Pi 5 + Dell | NPM, Tunnel, Filebrowser, backup; Pi 5 + MCP e MQTT `1883` |
+| [stream](apps/stacks/stream/README.md)         | Dell | *Arr + Jellyfin (HW `/dev/dri`) + Seerr + qBit + Jackett + Prowlarr |
 | [games](apps/stacks/games/README.md)           | Pi 5 | RomM — gerenciador de ROMs |
 | [immich](apps/stacks/immich/README.md)         | Pi 5 | Immich — fotos e vídeos |
 | [seafile](apps/stacks/seafile/README.md)       | Dell | Seafile + Seadoc |
@@ -128,11 +128,13 @@ home-server/
 │   ├── home_assistant/      # Documentação dos apps do HA
 │   └── stacks/
 │       ├── admin/           # Proxy, túnel, Filebrowser, backup (Pi 5 + Dell)
+│       │   ├── raspberrypi/ # compose/env admin no Pi 5 (+ MCP, MQTT 1883)
+│       │   └── dell/        # compose/env admin no dell3050
 │       ├── games/           # Jogos retro (RomM) — Pi 5
 │       ├── immich/          # Fotos e vídeos — Pi 5
-│       ├── seafile/         # Sync de arquivos — Dell
+│       ├── seafile/         # Sync de arquivos — Dell (compose + env)
 │       ├── stream/          # Mídia (*Arr + Jellyfin) — Dell
-│       └── telemetria/      # Grafana / Influx / MQTT — Pi 5
+│       └── telemetria/      # Grafana / Influx / MQTT — Pi 5 (compose + env)
 ├── automations/
 │   └── esp32/               # Proxies Bluetooth (ESPHome)
 ├── hardware/
