@@ -8,9 +8,11 @@ Documentação das aplicações e integrações instaladas no [Home Assistant](h
 
 | Origem                                   | Apps / integrações instalados |
 | ---------------------------------------- | ----------------------------- |
-| Repositório oficial de Apps do HA        | AdGuard Home, Uptime Kuma     |
+| Repositório oficial de Apps do HA        | Uptime Kuma                   |
 | Comunidade (via repositório customizado) | HACS                          |
 | HACS (integrações customizadas)          | Bermuda, Homelable            |
+
+> **AdGuard Home** foi removido da infraestrutura — ver seção abaixo.
 
 Para instalar apps de repositórios da comunidade, é necessário adicionar a URL do repositório em **Settings → Apps → Repositories** no Home Assistant. O **HACS** estende essa capacidade para integrações, temas e componentes customizados além dos apps em si.
 
@@ -24,13 +26,13 @@ Nesta instalação, o HACS é a **base para expandir o HA com repositórios da c
 
 **Referência:** [HACS — Configuração inicial](https://hacs.xyz/docs/use/configuration/basic/)
 
-### AdGuard Home
+### AdGuard Home — removido
 
-[AdGuard Home](https://adguard.com/adguard-home/overview.html) é um servidor DNS de bloqueio de anúncios e rastreadores em nível de rede, com controle parental e interface web para gerenciar filtros. Atua como DNS da rede local, protegendo todos os dispositivos conectados sem instalar software em cada um.
+[AdGuard Home](https://adguard.com/adguard-home/overview.html) chegou a ser usado como servidor DNS de bloqueio de anúncios e rastreadores em nível de rede (app do repositório oficial do Home Assistant, mantido por [hassio-addons](https://github.com/hassio-addons)).
 
-Instalado a partir do **repositório oficial de Apps do Home Assistant** (mantido por [hassio-addons](https://github.com/hassio-addons)).
+**Não está mais em uso na infraestrutura.** O bloqueio em nível de DNS interferia em funcionalidades de aplicativos e jogos: o **Duolingo** travava constantemente na rede com AdGuard, e o app da **Globoplay** também apresentava problemas. Diante da dificuldade de afinar listas/exceções sem quebrar outros serviços do dia a dia, a decisão foi **remover o AdGuard da infra**.
 
-**Referência:** [AdGuard Home — Home Assistant Community App](https://github.com/hassio-addons/app-adguard-home)
+**Referência (histórico):** [AdGuard Home — Home Assistant Community App](https://github.com/hassio-addons/app-adguard-home)
 
 ### Uptime Kuma
 
@@ -74,7 +76,7 @@ Principais recursos:
 - **Importação Zigbee/Z-Wave** — topologia a partir de Zigbee2MQTT e Z-Wave JS UI via MQTT
 - **Estilos personalizáveis** — diagrama exportável como PNG
 
-Nesta instalação, roda como **integração/app do Home Assistant via HACS** (versão HA do projeto), complementando o mapa visual da infraestrutura documentada nas [stacks Docker](../stacks/admin/README.md) e demais serviços do home server.
+Nesta instalação, roda como **integração/app do Home Assistant via HACS** (versão HA do projeto), complementando o mapa visual da infraestrutura documentada nas [stacks Docker](../stacks/raspberrypi/admin/README.md) e demais serviços do home server.
 
 **Referências:**
 
@@ -99,9 +101,9 @@ Consulte sempre a documentação oficial de cada app antes de alterar configura�
 - [Home Assistant](https://www.home-assistant.io/)
 - [HACS](https://hacs.xyz/)
 - [HACS — Configuração inicial](https://hacs.xyz/docs/use/configuration/basic/)
-- [AdGuard Home](https://adguard.com/adguard-home/overview.html)
+- [AdGuard Home](https://adguard.com/adguard-home/overview.html) *(histórico — removido da infra)*
 - [hassio-addons](https://github.com/hassio-addons)
-- [AdGuard Home — Home Assistant Community App](https://github.com/hassio-addons/app-adguard-home)
+- [AdGuard Home — Home Assistant Community App](https://github.com/hassio-addons/app-adguard-home) *(histórico)*
 - [Uptime Kuma](https://uptime.kuma.pet/)
 - [Uptime Kuma — Home Assistant Community App](https://github.com/hassio-addons/app-uptime-kuma)
 - [fabio-garavini/hassio-addons](https://github.com/fabio-garavini/hassio-addons)
