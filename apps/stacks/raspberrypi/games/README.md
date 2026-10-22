@@ -2,7 +2,7 @@
 
 Stack de serviços de jogos do home server. Hospeda o [RomM](https://romm.app/), um gerenciador de ROMs self-hosted acessado pelo navegador.
 
-**Onde roda:** Raspberry Pi 5 (`raspberrypi`) — ver [pi5/v2](../../../hardware/raspberry_pi/pi5/v2/README.md).
+**Onde roda:** Raspberry Pi 5 (`raspberrypi`) — ver [pi5/v2](../../../../hardware/raspberry_pi/pi5/v2/README.md).
 
 ## Arquitetura de rede
 

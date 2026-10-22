@@ -18,6 +18,8 @@ Com a chegada desta máquina, o **HDD de 1 TB** que antes ficava ligado ao Raspb
 
 ### Especificações neste setup
 
+A linha OptiPlex 3050 Micro usa chipset Intel B250, gráficos integrados Intel HD Graphics 530 (6ª geração), Ethernet Gigabit e suporte a até 32 GB de RAM (2× SODIMM). A unidade deste lab vem com a configuração:
+
 | Item | Detalhe |
 | ---- | ------- |
 | **Modelo** | Dell OptiPlex 3050 Micro (mini) |
@@ -25,8 +27,6 @@ Com a chegada desta máquina, o **HDD de 1 TB** que antes ficava ligado ao Raspb
 | **RAM** | 8 GB DDR4 |
 | **Armazenamento** | HDD 1 TB |
 | **Form factor** | Micro / mini desktop |
-
-A linha OptiPlex 3050 Micro usa chipset Intel B250, gráficos integrados Intel HD Graphics 530 (6ª geração), Ethernet Gigabit e suporte a até 32 GB de RAM (2× SODIMM). A unidade deste lab vem com a configuração da tabela acima.
 
 ### Papel na infraestrutura
 
@@ -36,7 +36,7 @@ Hostname na rede: **`dell3050`**.
 
 **Portainer:** neste host **não** roda o Portainer CE — só o **`portainer-agent`**. O gerenciamento das stacks do Dell (criar/editar stacks, containers, etc.) é feito pela **única** UI do Portainer no Pi 5, apontando para este agent. Detalhes: [Portainer — CE + Agent](../../apps/portainer/README.md#uma-única-instância--ce-no-pi-5-agent-no-dell).
 
-Acesso local às apps deste nó: o cliente fala com o **NPM do Pi 5**, que **repassa** ao NPM deste host. Exposição à internet: túnel Cloudflare **deste** nó. Ver [estratégia entre NPMs](../../apps/stacks/admin/README.md#estratégia-de-comunicação-entre-os-npms).
+Acesso local às apps deste nó: o cliente fala com o **NPM do Pi 5**, que **repassa** ao NPM deste host. Exposição à internet: túnel Cloudflare **deste** nó. Ver [estratégia entre NPMs](../../apps/stacks/raspberrypi/admin/README.md#estratégia-de-comunicação-entre-os-npms).
 
 ### Resumo do armazenamento
 
@@ -63,7 +63,7 @@ dell3050
 └── seafile                  → Seafile + Seadoc + MariaDB + Redis
 ```
 
-Documentação das stacks: [admin](../../apps/stacks/admin/README.md) · [compose admin no Dell](../../apps/stacks/admin/dell/) · [stream](../../apps/stacks/stream/README.md) · [seafile](../../apps/stacks/seafile/) (compose + env). Inventário do Pi 5: [pi5/v2](../raspberry_pi/pi5/v2/README.md).
+Documentação das stacks: [admin](../../apps/stacks/dell3050/admin/README.md) · [stream](../../apps/stacks/dell3050/stream/README.md) · [seafile](../../apps/stacks/dell3050/seafile/README.md). Inventário do Pi 5: [pi5/v2](../raspberry_pi/pi5/v2/README.md).
 
 ---
 

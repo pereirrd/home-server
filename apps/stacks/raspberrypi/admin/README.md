@@ -6,24 +6,23 @@ Stack de ferramentas administrativas do home server. Reúne o proxy reverso, o b
 
 | Host | Hostname | Apps na stack `admin` | Compose neste repo |
 | ---- | -------- | --------------------- | ------------------ |
-| Raspberry Pi 5 | `raspberrypi` | NPM (entrada + MQTT `1883`), Cloudflare Tunnel, Filebrowser, portainer-backup, **portainer-mcp** | [`raspberrypi/`](./raspberrypi/) |
-| Dell OptiPlex 3050 Micro | `dell3050` | NPM, Cloudflare Tunnel, Filebrowser, portainer-backup | [`dell/`](./dell/) |
+| Raspberry Pi 5 | `raspberrypi` | NPM (entrada + MQTT `1883`), Cloudflare Tunnel, Filebrowser, portainer-backup, **portainer-mcp** | [`./`](./) |
+| Dell OptiPlex 3050 Micro | `dell3050` | NPM, Cloudflare Tunnel, Filebrowser, portainer-backup | [`../../dell3050/admin/`](../../dell3050/admin/) |
 
 Cada nó tem a própria rede Docker (`proxy_network` local àquele host). Containers do Pi 5 **não** resolvem por nome containers do Dell (e vice-versa) — por isso o proxy entre máquinas passa pelos NPMs, não pela rede Compose compartilhada.
 
 ### Arquivos de exemplo
 
 ```
-apps/stacks/admin/
+apps/stacks/raspberrypi/admin/   # este diretório — Pi 5 (entrada *.local + MCP + MQTT)
 ├── README.md
-├── docker-compose.yaml       # esqueleto genérico legado
-├── env.example
-├── raspberrypi/              # produção no Pi 5 (entrada *.local + MCP + MQTT)
-│   ├── docker-compose.yaml
-│   └── env.example
-└── dell/                     # produção no dell3050
-    ├── docker-compose.yaml
-    └── env.example
+├── docker-compose.yaml
+└── env.example
+
+apps/stacks/dell3050/admin/      # produção no dell3050
+├── README.md
+├── docker-compose.yaml
+└── env.example
 ```
 
 
@@ -126,7 +125,7 @@ No painel (`http://<host>:81`), use sempre a porta **interna** do serviço (não
 | `81` | Painel de administração do NPM | Pi 5 e Dell |
 | `1883` | MQTT (ex.: Mosquitto da [telemetria](../telemetria/README.md)) | **somente Pi 5** |
 
-![Rotas Nginx Proxy Manager](../../../shared/npm.png)
+![Rotas Nginx Proxy Manager](../../../../shared/npm.png)
 
 **Referência:** [Nginx Proxy Manager — Documentação](https://nginxproxymanager.com/guide/)
 
@@ -162,7 +161,7 @@ Há um `cloudflared` em **cada** host (`raspberrypi` e `dell3050`), cada um com 
 
 ### Raspberry Pi 5 (`raspberrypi`)
 
-Compose e variáveis em [`raspberrypi/`](./raspberrypi/). NPM de **entrada** da LAN; inclui Filebrowser, portainer-mcp, backup, tunnel e publicação da porta **MQTT `1883`**.
+Compose e variáveis neste diretório. NPM de **entrada** da LAN; inclui Filebrowser, portainer-mcp, backup, tunnel e publicação da porta **MQTT `1883`**.
 
 | Variável | Descrição |
 | --- | --- |
@@ -175,7 +174,7 @@ Compose e variáveis em [`raspberrypi/`](./raspberrypi/). NPM de **entrada** da 
 
 ### Dell (`dell3050`)
 
-Compose e variáveis em [`dell/`](./dell/). Sem MCP e sem porta MQTT no NPM.
+Compose e variáveis em [`../../dell3050/admin/`](../../dell3050/admin/). Sem MCP e sem porta MQTT no NPM.
 
 | Variável | Descrição |
 | --- | --- |
@@ -184,7 +183,3 @@ Compose e variáveis em [`dell/`](./dell/). Sem MCP e sem porta MQTT no NPM.
 | `PORTAINER_BACKUP_*` / `FILEBROWSER_*` / `NGINX_PROXY_*` | Idem ao Pi 5, paths locais do Dell |
 
 Antes do deploy em cada host: `docker network create proxy_network` (se ainda não existir).
-
-### Exemplo genérico (raiz)
-
-O `docker-compose.yaml` / `env.example` na raiz são um esqueleto legado. Prefira [`raspberrypi/`](./raspberrypi/) e [`dell/`](./dell/) conforme o nó.

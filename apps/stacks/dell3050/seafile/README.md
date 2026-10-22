@@ -10,14 +10,14 @@ Stack de sincronização e compartilhamento de arquivos do home server, baseada 
 | ---- | -------- | ------------- |
 | Dell OptiPlex 3050 Micro | `dell3050` | `seafile` |
 
-Inventário completo do nó: [hardware/dell](../../../hardware/dell/README.md).
+Inventário completo do nó: [hardware/dell3050](../../../../hardware/dell3050/README.md).
 
-Acesso local típico: NPM do Pi 5 → NPM do Dell → container `seafile` na `proxy_network` do x86 ([estratégia entre NPMs](../admin/README.md#estratégia-de-comunicação-entre-os-npms)).
+Acesso local típico: NPM do Pi 5 → NPM do Dell → container `seafile` na `proxy_network` do x86 ([estratégia entre NPMs](../../raspberrypi/admin/README.md#estratégia-de-comunicação-entre-os-npms)).
 
 ## Arquivos de exemplo
 
 ```
-apps/stacks/seafile/
+apps/stacks/dell3050/seafile/
 ├── README.md
 ├── docker-compose.yaml
 └── env.example
@@ -69,5 +69,6 @@ Labels `caddy.*` no compose vêm do template oficial do Seafile; neste home serv
 
 - [Seafile](https://www.seafile.com/)
 - [Seafile Docker](https://manual.seafile.com/docker/deploy_seafile_with_docker/)
-- [Dell OptiPlex 3050 Micro](../../../hardware/dell/README.md)
-- [Admin — NPMs](../admin/README.md)
+- [Dell OptiPlex 3050 Micro](../../../../hardware/dell3050/README.md)
+- [Admin deste host](../admin/README.md)
+- [Estratégia entre NPMs](../../raspberrypi/admin/README.md#estratégia-de-comunicação-entre-os-npms)

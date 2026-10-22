@@ -20,7 +20,7 @@ O universo de home server é **muito vasto**. Além do que está documentado aqu
 
 ## Hardware
 
-A infraestrutura documentada neste repositório roda em **três nós**: dois Raspberry Pi com **8 GB de RAM** e um **Dell OptiPlex 3050 Micro**. Detalhes de placas, HATs PCIe, discos e topologia: [hardware/raspberry_pi/README.md](hardware/raspberry_pi/README.md) · [hardware/dell/README.md](hardware/dell/README.md).
+A infraestrutura documentada neste repositório roda em **três nós**: dois Raspberry Pi com **8 GB de RAM** e um **Dell OptiPlex 3050 Micro**. Detalhes de placas, HATs PCIe, discos e topologia: [hardware/raspberry_pi/README.md](hardware/raspberry_pi/README.md) · [hardware/dell3050/README.md](hardware/dell3050/README.md).
 
 Os ESP32 usados como Bluetooth trackers e captura de IRK na automação residencial estão documentados em [hardware/esp32/README.md](hardware/esp32/README.md) (firmware em [automations/esp32](automations/esp32/README.md)).
 
@@ -42,7 +42,7 @@ Dedicado ao [Home Assistant](apps/home_assistant/README.md). O HA roda **diretam
 
 Hostname: **`dell3050`**. Intel Core **i5 de 6ª geração**, **8 GB de RAM**, **HDD de 1 TB**.
 
-Em execução: **portainer-agent** (sem UI — gerenciado pelo CE do Pi 5), stacks **admin**, **stream** e **seafile**. Inventário: [hardware/dell](hardware/dell/README.md).
+Em execução: **portainer-agent** (sem UI — gerenciado pelo CE do Pi 5), stacks **admin**, **stream** e **seafile**. Inventário: [hardware/dell3050](hardware/dell3050/README.md).
 
 ## Visão geral
 
@@ -60,7 +60,7 @@ Home Assistant (Pi 4)    → monitoramento, HACS (AdGuard removido)
 Automations ESP32        → proxies Bluetooth para o HA
 ```
 
-Cada host tem sua própria `proxy_network`. O **NPM de entrada** é o do **Pi 5** (`*.local` → `10.0.0.x`): apps locais vão direto aos containers; apps no Dell são **repassadas ao NPM do `dell3050`**. Os dois nós têm túnel Cloudflare para exposição na internet. Detalhes: [estratégia entre NPMs](apps/stacks/admin/README.md#estratégia-de-comunicação-entre-os-npms).
+Cada host tem sua própria `proxy_network`. O **NPM de entrada** é o do **Pi 5** (`*.local` → `10.0.0.x`): apps locais vão direto aos containers; apps no Dell são **repassadas ao NPM do `dell3050`**. Os dois nós têm túnel Cloudflare para exposição na internet. Detalhes: [estratégia entre NPMs](apps/stacks/raspberrypi/admin/README.md#estratégia-de-comunicação-entre-os-npms).
 
 | Área               | Função / host                                             |
 | ------------------ | --------------------------------------------------------- |
@@ -92,14 +92,15 @@ Cada host tem sua própria `proxy_network`. O **NPM de entrada** é o do **Pi 5*
 ### Stacks Docker
 
 
-| Stack                                          | Host | Descrição |
-| ---------------------------------------------- | ---- | --------- |
-| [admin](apps/stacks/admin/README.md) ([pi](apps/stacks/admin/raspberrypi/) · [dell](apps/stacks/admin/dell/)) | Pi 5 + Dell | NPM, Tunnel, Filebrowser, backup; Pi 5 + MCP e MQTT `1883` |
-| [stream](apps/stacks/stream/README.md)         | Dell | *Arr + Jellyfin (HW `/dev/dri`) + Seerr + qBit + Jackett + Prowlarr |
-| [games](apps/stacks/games/README.md)           | Pi 5 | RomM — gerenciador de ROMs |
-| [immich](apps/stacks/immich/README.md)         | Pi 5 | Immich — fotos e vídeos |
-| [seafile](apps/stacks/seafile/README.md)       | Dell | Seafile + Seadoc |
-| [telemetria](apps/stacks/telemetria/README.md) | Pi 5 | Grafana, InfluxDB, Mosquitto, Telegraf |
+| Stack | Host | Descrição |
+| ----- | ---- | --------- |
+| [admin](apps/stacks/raspberrypi/admin/README.md) | Pi 5 | NPM de entrada, Tunnel, Filebrowser, backup, MCP e MQTT `1883` |
+| [games](apps/stacks/raspberrypi/games/README.md) | Pi 5 | RomM — gerenciador de ROMs |
+| [immich](apps/stacks/raspberrypi/immich/README.md) | Pi 5 | Immich — fotos e vídeos |
+| [telemetria](apps/stacks/raspberrypi/telemetria/README.md) | Pi 5 | Grafana, InfluxDB, Mosquitto, Telegraf |
+| [admin](apps/stacks/dell3050/admin/README.md) | Dell | NPM, Tunnel, Filebrowser e backup |
+| [stream](apps/stacks/dell3050/stream/README.md) | Dell | *Arr + Jellyfin (HW `/dev/dri`) + Seerr + qBit + Jackett + Prowlarr |
+| [seafile](apps/stacks/dell3050/seafile/README.md) | Dell | Seafile + Seadoc |
 
 
 
@@ -112,7 +113,7 @@ Cada host tem sua própria `proxy_network`. O **NPM de entrada** é o do **Pi 5*
 | [Home Assistant](apps/home_assistant/README.md)          | Apps: HACS, Uptime Kuma, Bermuda, Homelable (AdGuard removido) |
 | [ESP32 — Hardware](hardware/esp32/README.md)             | DevKit V1, DevKitC V4 e Mini C3 — inventário e specs     |
 | [ESP32 — Bluetooth Tracker](automations/esp32/README.md) | Proxies BLE integrados ao Home Assistant via ESPHome     |
-| [Dell OptiPlex 3050 Micro](hardware/dell/README.md)      | Nó x86 — i5 6ª gen, 8 GB RAM, HDD 1 TB                   |
+| [Dell OptiPlex 3050 Micro](hardware/dell3050/README.md)      | Nó x86 — i5 6ª gen, 8 GB RAM, HDD 1 TB                   |
 | [Raspberry Pi](hardware/raspberry_pi/README.md)          | Pi 5 (M.2 256 GB) e Pi 4 (Home Assistant)                |
 
 
@@ -124,24 +125,25 @@ Cada host tem sua própria `proxy_network`. O **NPM de entrada** é o do **Pi 5*
 ```
 home-server/
 ├── apps/
-│   ├── portainer/           # Gerenciador Docker (iniciado via terminal)
-│   ├── home_assistant/      # Documentação dos apps do HA
+│   ├── portainer/                 # Portainer CE (compose standalone, via terminal)
+│   ├── home_assistant/            # Documentação dos apps do HA
 │   └── stacks/
-│       ├── admin/           # Proxy, túnel, Filebrowser, backup (Pi 5 + Dell)
-│       │   ├── raspberrypi/ # compose/env admin no Pi 5 (+ MCP, MQTT 1883)
-│       │   └── dell/        # compose/env admin no dell3050
-│       ├── games/           # Jogos retro (RomM) — Pi 5
-│       ├── immich/          # Fotos e vídeos — Pi 5
-│       ├── seafile/         # Sync de arquivos — Dell (compose + env)
-│       ├── stream/          # Mídia (*Arr + Jellyfin) — Dell
-│       └── telemetria/      # Grafana / Influx / MQTT — Pi 5 (compose + env)
+│       ├── raspberrypi/           # hostname raspberrypi (Pi 5)
+│       │   ├── admin/             # NPM de entrada, túnel, Filebrowser, backup, MCP
+│       │   ├── games/             # RomM
+│       │   ├── immich/            # Fotos e vídeos
+│       │   └── telemetria/        # Grafana / Influx / MQTT
+│       └── dell3050/              # hostname dell3050 (OptiPlex 3050 Micro)
+│           ├── admin/             # NPM, túnel, Filebrowser, backup
+│           ├── seafile/           # Seafile + Seadoc
+│           └── stream/            # *Arr + Jellyfin
 ├── automations/
-│   └── esp32/               # Proxies Bluetooth (ESPHome)
+│   └── esp32/                     # Proxies Bluetooth (ESPHome)
 ├── hardware/
-│   ├── raspberry_pi/        # Placas, HATs PCIe e armazenamento (Pi)
-│   ├── dell/                # OptiPlex 3050 Micro (nó x86 + HDD 1 TB)
-│   └── esp32/               # DevKits ESP32 (BLE tracker / IRK)
-├── shared/                  # Arquivos úteis compartilhados com o repositório
+│   ├── raspberry_pi/              # Placas, HATs PCIe e armazenamento (Pi)
+│   ├── dell3050/                  # OptiPlex 3050 Micro (nó x86 + HDD 1 TB)
+│   └── esp32/                     # DevKits ESP32 (BLE tracker / IRK)
+├── shared/                        # Arquivos úteis compartilhados com o repositório
 └── README.md
 ```
 

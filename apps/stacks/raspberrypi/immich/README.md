@@ -2,7 +2,7 @@
 
 Stack de gerenciamento de fotos e vídeos do home server. Hospeda o [Immich](https://immich.app/), alternativa self-hosted de alto desempenho a serviços de nuvem como Google Photos.
 
-**Onde roda:** Raspberry Pi 5 (`raspberrypi`) — ver [pi5/v2](../../../hardware/raspberry_pi/pi5/v2/README.md).
+**Onde roda:** Raspberry Pi 5 (`raspberrypi`) — ver [pi5/v2](../../../../hardware/raspberry_pi/pi5/v2/README.md).
 
 ## Arquitetura de rede
 

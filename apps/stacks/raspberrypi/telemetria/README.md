@@ -10,12 +10,12 @@ Stack de observabilidade do home server: métricas (Glances → MQTT → Telegra
 | ---- | -------- | ------------- |
 | Raspberry Pi 5 | `raspberrypi` | `telemetria` |
 
-Inventário: [hardware/raspberry_pi/pi5/v2](../../../hardware/raspberry_pi/pi5/v2/README.md).
+Inventário: [hardware/raspberry_pi/pi5/v2](../../../../hardware/raspberry_pi/pi5/v2/README.md).
 
 ## Arquivos de exemplo
 
 ```
-apps/stacks/telemetria/
+apps/stacks/raspberrypi/telemetria/
 ├── README.md
 ├── docker-compose.yaml
 └── env.example
@@ -35,18 +35,32 @@ $STACK_DIR/
 ## Arquitetura
 
 ```
-Glances / sensores  →  Mosquitto (MQTT)
+cada servidor (Glances no SO, como serviço)
+  CPU, memória, disco, temperaturas
+              ↓ MQTT
+          Mosquitto
+              ↓
+          Telegraf  →  InfluxDB 2.7
                            ↓
-                       Telegraf  →  InfluxDB 2.7
-                                        ↓
-                                    Grafana
+                       Grafana (dashboard)
 ```
 
 Todos os serviços entram na `proxy_network` do Pi 5, com aliases estáveis (`telemetria-mosquitto`, `telemetria-influxdb`, `telemetria-grafana`) para o NPM e entre containers. Nomes de container gerados pelo Compose costumam ser `telemetria-*-1`.
 
-**MQTT na LAN:** a porta `1883` é publicada pelo **NPM** da stack [admin do Pi 5](../admin/raspberrypi/) (`1883:1883`), não por este compose.
+**MQTT na LAN:** a porta `1883` é publicada pelo **NPM** da stack [admin do Pi 5](../admin/) (`1883:1883`), não por este compose.
 
 **Grafana:** Proxy Host no NPM de entrada apontando para `telemetria-grafana:3000` (ou o nome do container), com `GF_SERVER_ROOT_URL` igual ao hostname público/local.
+
+## Coleta com Glances
+
+Os dados de telemetria são gerados pelo [Glances](https://github.com/nicolargo/glances). Ele está instalado em **cada servidor** da infraestrutura, diretamente no sistema operacional, e roda como serviço — fora desta stack Docker. Cada instância publica no Mosquitto as métricas do hardware em que está:
+
+- consumo de CPU
+- uso de memória
+- uso de disco
+- temperaturas registradas pelos sensores daquele hardware
+
+O Telegraf consome esses tópicos e grava as séries no bucket do InfluxDB. No Grafana há um dashboard com gráficos para exibir essas métricas.
 
 ## Containers
 
@@ -76,9 +90,10 @@ Antes do deploy: `docker network create proxy_network` (se ainda não existir). 
 
 ## Referências
 
+- [Glances](https://nicolargo.github.io/glances/)
 - [Grafana](https://grafana.com/docs/)
 - [InfluxDB](https://docs.influxdata.com/influxdb/)
 - [Eclipse Mosquitto](https://mosquitto.org/documentation/)
 - [Telegraf](https://docs.influxdata.com/telegraf/)
-- [Admin Pi 5 — porta MQTT](../admin/raspberrypi/)
-- [Raspberry Pi 5 — v2](../../../hardware/raspberry_pi/pi5/v2/README.md)
+- [Admin Pi 5 — porta MQTT](../admin/)
+- [Raspberry Pi 5 — v2](../../../../hardware/raspberry_pi/pi5/v2/README.md)

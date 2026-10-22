@@ -2,7 +2,7 @@
 
 Stack de mídia e streaming do home server, baseada no ecossistema **\*Arr** — conjunto popular de aplicações open source e self-hosted para automatizar a aquisição, organização e reprodução de conteúdo audiovisual.
 
-**Onde roda:** [Dell OptiPlex 3050 Micro](../../../hardware/dell/README.md) (`dell3050`), no HDD de 1 TB. **Migrada do Raspberry Pi 5** — configs em `~/Stream`, biblioteca em `/media/.../HDD/stream`.
+**Onde roda:** [Dell OptiPlex 3050 Micro](../../../../hardware/dell3050/README.md) (`dell3050`), no HDD de 1 TB. **Migrada do Raspberry Pi 5** — configs em `~/Stream`, biblioteca em `/media/.../HDD/stream`.
 
 > **Importante:** este repositório contém apenas um **exemplo funcional** da stack. A integração correta entre os serviços (indexadores, clientes de download, paths de volume, perfis de qualidade, nomenclatura de arquivos etc.) depende de configuração detalhada. **Consulte sempre a documentação oficial** de cada aplicação para montar a pipeline de ponta a ponta.
 
@@ -36,7 +36,7 @@ No NPM, configure um Proxy Host por serviço usando o **nome do container** e a 
 | `jackett` | `9117` |
 | `prowlarr` | `9696` |
 
-No Dell, o NPM local recebe o repasse do NPM do Pi 5 ([estratégia entre NPMs](../admin/README.md#estratégia-de-comunicação-entre-os-npms)).
+No Dell, o NPM local recebe o repasse do NPM do Pi 5 ([estratégia entre NPMs](../../raspberrypi/admin/README.md#estratégia-de-comunicação-entre-os-npms)).
 
 
 ## Pipeline automatizada

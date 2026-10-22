@@ -1,7 +1,7 @@
 # Raspberry Pi 5
 
 
-Placa principal da infraestrutura de containers. Roda [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/), hospedando o [Portainer](../../../../apps/portainer/README.md) e as [stacks Docker](../../../../apps/stacks/admin/README.md).
+Placa principal da infraestrutura de containers. Roda [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/), hospedando o [Portainer](../../../../apps/portainer/README.md) e as [stacks Docker](../../../../apps/stacks/raspberrypi/admin/README.md).
 
 ### Especificações da placa
 
@@ -18,7 +18,7 @@ Raspberry Pi 5
         └── Slot M.2 NVMe → NVMe 256 GB [sistema operacional + containers]
 ```
 
-> **Mudança de topologia:** o HDD de 1 TB que antes ficava no Pi 5 via hub USB com fonte externa foi removido deste nó. O armazenamento em massa passou para o [Dell OptiPlex 3050 Micro](../../../dell/README.md). O Raspberry Pi 5 permanece **somente com o M.2 de 256 GB**, rodando o SO e alguns containers Docker.
+> **Mudança de topologia:** o HDD de 1 TB que antes ficava no Pi 5 via hub USB com fonte externa foi removido deste nó. O armazenamento em massa passou para o [Dell OptiPlex 3050 Micro](../../../dell3050/README.md). O Raspberry Pi 5 permanece **somente com o M.2 de 256 GB**, rodando o SO e alguns containers Docker.
 
 #### Argon One v3 M.2 NVMe PCIE Case
 
@@ -46,7 +46,7 @@ O disco está montado diretamente no slot M.2 NVMe integrado ao case Argon One v
 
 Hostname na rede: **`raspberrypi`** (este é o **Raspberry Pi 5**). Inventário a partir de `docker compose ls` / `docker ps`. O Raspberry Pi 4 (Home Assistant) **não** está incluído nesta lista.
 
-Este host concentra o **NPM de entrada** da LAN (`*.local` → IP estático **10.0.0.x**): proxy direto para containers locais e repasse ao NPM do Dell quando a app está no x86. Também tem túnel Cloudflare próprio. Ver [estratégia entre NPMs](../../../../apps/stacks/admin/README.md#estratégia-de-comunicação-entre-os-npms).
+Este host concentra o **NPM de entrada** da LAN (`*.local` → IP estático **10.0.0.x**): proxy direto para containers locais e repasse ao NPM do Dell quando a app está no x86. Também tem túnel Cloudflare próprio. Ver [estratégia entre NPMs](../../../../apps/stacks/raspberrypi/admin/README.md#estratégia-de-comunicação-entre-os-npms).
 
 | Stack / origem | Containers | Papel |
 | -------------- | ---------- | ----- |
@@ -65,9 +65,9 @@ raspberrypi (Pi 5)
 └── telemetria               → Grafana + InfluxDB + Mosquitto + Telegraf
 ```
 
-A stack **stream** e o **Seafile** rodam no [Dell OptiPlex 3050 Micro](../../../dell/README.md) (`dell3050`), não neste nó.
+A stack **stream** e o **Seafile** rodam no [Dell OptiPlex 3050 Micro](../../../dell3050/README.md) (`dell3050`), não neste nó.
 
-Documentação: [Portainer](../../../../apps/portainer/README.md) · [admin](../../../../apps/stacks/admin/README.md) · [compose admin no Pi 5](../../../../apps/stacks/admin/raspberrypi/) · [games](../../../../apps/stacks/games/README.md) · [immich](../../../../apps/stacks/immich/README.md) · [telemetria](../../../../apps/stacks/telemetria/) (compose + env).
+Documentação: [Portainer](../../../../apps/portainer/README.md) · [admin](../../../../apps/stacks/raspberrypi/admin/README.md) · [games](../../../../apps/stacks/raspberrypi/games/README.md) · [immich](../../../../apps/stacks/raspberrypi/immich/README.md) · [telemetria](../../../../apps/stacks/raspberrypi/telemetria/README.md).
 
 ---
 
@@ -80,7 +80,7 @@ Documentação: [Portainer](../../../../apps/portainer/README.md) · [admin](../
 - [Configuração v1 (Waveshare + Geekworm)](../v1/README.md)
 
 ### Outros nós
-- [Dell OptiPlex 3050 Micro](../../../dell/README.md) — HDD 1 TB (stream, seafile, admin, portainer-agent)
+- [Dell OptiPlex 3050 Micro](../../../dell3050/README.md) — HDD 1 TB (stream, seafile, admin, portainer-agent)
 
 ### Imagens do Hardware
 ![Frontal](../../../../shared/raspberrypi5/v2/front.jpg)

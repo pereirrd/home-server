@@ -76,7 +76,7 @@ Principais recursos:
 - **Importação Zigbee/Z-Wave** — topologia a partir de Zigbee2MQTT e Z-Wave JS UI via MQTT
 - **Estilos personalizáveis** — diagrama exportável como PNG
 
-Nesta instalação, roda como **integração/app do Home Assistant via HACS** (versão HA do projeto), complementando o mapa visual da infraestrutura documentada nas [stacks Docker](../stacks/admin/README.md) e demais serviços do home server.
+Nesta instalação, roda como **integração/app do Home Assistant via HACS** (versão HA do projeto), complementando o mapa visual da infraestrutura documentada nas [stacks Docker](../stacks/raspberrypi/admin/README.md) e demais serviços do home server.
 
 **Referências:**
 

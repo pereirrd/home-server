@@ -33,7 +33,7 @@ O agent fica **fora** das stacks Compose do Portainer (container standalone / de
 
 ## Arquitetura de rede
 
-O Portainer CE **não publica portas no host**. Ele participa da rede externa `proxy_network` do Pi 5 e o acesso à interface web é feito pelo [Nginx Proxy Manager](../stacks/admin/README.md) de entrada.
+O Portainer CE **não publica portas no host**. Ele participa da rede externa `proxy_network` do Pi 5 e o acesso à interface web é feito pelo [Nginx Proxy Manager](../stacks/raspberrypi/admin/README.md) de entrada.
 
 ```bash
 docker network create proxy_network   # se ainda não existir (em cada host, se aplicável)
@@ -56,10 +56,10 @@ Stacks gerenciadas a partir **desta** única UI do Portainer:
 
 | Ambiente no Portainer | Host | Stacks |
 | --------------------- | ---- | ------ |
-| Local (Docker do Pi 5) | `raspberrypi` | [admin](../stacks/admin/README.md), [games](../stacks/games/README.md), [immich](../stacks/immich/README.md), [telemetria](../stacks/telemetria/README.md) |
-| Remoto (via Agent) | `dell3050` | [admin](../stacks/admin/README.md), [stream](../stacks/stream/README.md), [seafile](../stacks/seafile/README.md) |
+| Local (Docker do Pi 5) | `raspberrypi` | [admin](../stacks/raspberrypi/admin/README.md), [games](../stacks/raspberrypi/games/README.md), [immich](../stacks/raspberrypi/immich/README.md), [telemetria](../stacks/raspberrypi/telemetria/README.md) |
+| Remoto (via Agent) | `dell3050` | [admin](../stacks/dell3050/admin/README.md), [stream](../stacks/dell3050/stream/README.md), [seafile](../stacks/dell3050/seafile/README.md) |
 
-Após a instalação inicial, as stacks dos dois hosts são criadas e mantidas pela interface web do Portainer CE. O backup automatizado da instância é feito pela stack admin ([portainer-backup](../stacks/admin/README.md)).
+Após a instalação inicial, as stacks dos dois hosts são criadas e mantidas pela interface web do Portainer CE. O backup automatizado da instância é feito pela stack admin ([portainer-backup](../stacks/raspberrypi/admin/README.md)).
 
 ## Configuração
 
@@ -75,7 +75,7 @@ O container monta o socket Docker do host (`/var/run/docker.sock`) em modo somen
 
 ## Deploy
 
-Este serviço deve ser iniciado **pelo terminal**. A ordem recomendada é criar a `proxy_network`, subir o Portainer e em seguida a [stack admin](../stacks/admin/README.md) (que inclui o NPM):
+Este serviço deve ser iniciado **pelo terminal**. A ordem recomendada é criar a `proxy_network`, subir o Portainer e em seguida a [stack admin](../stacks/raspberrypi/admin/README.md) (que inclui o NPM):
 
 ```bash
 docker network create proxy_network

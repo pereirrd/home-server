@@ -1,6 +1,6 @@
 # Hardware — Raspberry Pi
 
-Apresentando a infraestrutura física baseada em Raspberry Pi. A documentação de software (stacks, Portainer, Home Assistant) está no [README principal](../../README.md). O nó x86 Dell está em [hardware/dell](../dell/README.md).
+Apresentando a infraestrutura física baseada em Raspberry Pi. A documentação de software (stacks, Portainer, Home Assistant) está no [README principal](../../README.md). O nó x86 Dell está em [hardware/dell3050](../dell3050/README.md).
 
 ## Visão geral
 
@@ -9,7 +9,7 @@ Apresentando a infraestrutura física baseada em Raspberry Pi. A documentação 
 | **Raspberry Pi 5** (`raspberrypi`) | 8 GB | Portainer CE, admin, games, immich, telemetria (só M.2) | NVMe M.2 256 GB (boot + containers) |
 | **Raspberry Pi 4** | 8 GB | Automação residencial (Home Assistant) — sem inventário Docker aqui | SD card 32 GB (boot) + SSD 224 GB (USB 3.0) |
 
-> O HDD de 1 TB não fica mais no Pi 5 — ver [Dell OptiPlex 3050 Micro](../dell/README.md).
+> O HDD de 1 TB não fica mais no Pi 5 — ver [Dell OptiPlex 3050 Micro](../dell3050/README.md).
 
 ---
 
@@ -27,5 +27,5 @@ Para detalhes sobre a infraestrutura do Raspberry Pi 4, consulte o [README do pi
 - [Raspberry Pi 5 — produto oficial](https://www.raspberrypi.com/products/raspberry-pi-5/)
 - [Introducing: Raspberry Pi 5](https://www.raspberrypi.com/news/introducing-raspberry-pi-5/)
 - [Raspberry Pi 4 Model B — produto oficial](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/)
-- [Dell OptiPlex 3050 Micro](../dell/README.md)
+- [Dell OptiPlex 3050 Micro](../dell3050/README.md)
 
