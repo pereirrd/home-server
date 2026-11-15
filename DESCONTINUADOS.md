@@ -8,9 +8,9 @@ Cada entrada diz o que a aplicação fazia, por que foi descartada e o que ficou
 
 O [Portainer](https://www.portainer.io/) Community Edition era o gerenciador de containers. Havia **uma** interface no Raspberry Pi 5 e um **Agent** no Dell OptiPlex 3050 Micro: a UI do Pi enxergava os dois Docker Engines e era por ela que as stacks eram criadas e atualizadas. O backup da instância rodava na stack admin (`portainer-backup`) e havia um MCP (`portainer-mcp`) em cima da API do Portainer.
 
-**Por que saiu.** O Portainer guarda o `docker-compose.yaml` de cada stack em um **banco interno**. Mudar uma stack significava editar esse banco pela interface, não um arquivo no disco. Isso dificulta a manutenção e, principalmente, mudanças feitas por **agentes de IA**, que trabalham em arquivos versionados. Foram avaliadas outras aplicações de gestão de containers. O [Komodo](apps/komodo/README.md) foi o escolhido pela **interface amigável** e porque, no modo *Files on Server*, o compose fica **no disco** do host: a IA edita o arquivo e o deploy lê esse arquivo.
+**Por que saiu.** O Portainer guarda o `docker-compose.yaml` de cada stack em um **banco interno**. Mudar uma stack significava editar esse banco pela interface, não um arquivo no disco. Isso dificulta a manutenção e, principalmente, mudanças feitas por **agentes de IA**, que trabalham em arquivos versionados. Foram avaliadas outras aplicações de gestão de containers. O [Komodo](apps/stacks/raspberrypi/komodo/README.md) foi o escolhido pela **interface amigável** e porque, no modo *Files on Server*, o compose fica **no disco** do host: a IA edita o arquivo e o deploy lê esse arquivo.
 
-**No lugar.** [Komodo](apps/komodo/README.md) — Core no Pi 5, Periphery em cada host Docker. O nome `portainer` sobrevive só no coletor da [telemetria](apps/stacks/raspberrypi/telemetria/README.md): o container `portainer-collector` passou a ler a API do Komodo, mas continua publicando no prefixo MQTT `portainer/` para os dashboards não mudarem.
+**No lugar.** [Komodo](apps/stacks/raspberrypi/komodo/README.md) — Core no Pi 5, Periphery em cada host Docker. O nome `portainer` sobrevive só no coletor da [telemetria](apps/stacks/raspberrypi/telemetria/README.md): o container `portainer-collector` passou a ler a API do Komodo, mas continua publicando no prefixo MQTT `portainer/` para os dashboards não mudarem.
 
 ## Webmin
 
@@ -30,7 +30,7 @@ O [AdGuard Home](https://adguard.com/adguard-home/overview.html) foi o servidor 
 
 ## Referências
 
-- [Komodo — o que está no lugar do Portainer](apps/komodo/README.md)
+- [Komodo — o que está no lugar do Portainer](apps/stacks/raspberrypi/komodo/README.md)
 - [Home Assistant](apps/home_assistant/README.md)
 - [Raspberry Pi 5 — montagem v1 (época do Webmin)](hardware/raspberry_pi/pi5/v1/README.md)
 - [Portainer](https://www.portainer.io/) *(histórico)*

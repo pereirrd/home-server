@@ -28,7 +28,7 @@ Os ESP32 usados como Bluetooth trackers e captura de IRK na automação residenc
 
 Hostname: **`raspberrypi`**. Sistema operacional [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/). Armazenamento: **somente NVMe M.2 256 GB**.
 
-Em execução: o [Komodo](apps/komodo/README.md) (Core, Periphery e MongoDB), stacks **admin**, **telemetria** e **mcps** (gateway de MCPs). Inventário detalhado: [hardware/raspberry_pi/pi5/v2](hardware/raspberry_pi/pi5/v2/README.md).
+Em execução: o [Komodo](apps/stacks/raspberrypi/komodo/README.md) (Core, Periphery e MongoDB), stacks **admin**, **telemetria** e **mcps** (gateway de MCPs). Inventário detalhado: [hardware/raspberry_pi/pi5/v2](hardware/raspberry_pi/pi5/v2/README.md).
 
 **Referências:** [Raspberry Pi 5](https://www.raspberrypi.com/products/raspberry-pi-5/) · [Introducing Raspberry Pi 5](https://www.raspberrypi.com/news/introducing-raspberry-pi-5/)
 
@@ -61,11 +61,11 @@ Home Assistant (Pi 4)    → monitoramento, HACS
 Automations ESP32        → proxies Bluetooth para o HA
 ```
 
-O Core no Pi 5 gerencia as stacks dos **dois** hosts no modo *Files on Server*: o compose fica no disco de cada máquina e o Periphery daquela máquina executa o deploy. Detalhes: [Komodo](apps/komodo/README.md).
+O Core no Pi 5 gerencia as stacks dos **dois** hosts no modo *Files on Server*: o compose fica no disco de cada máquina e o Periphery daquela máquina executa o deploy. Detalhes: [Komodo](apps/stacks/raspberrypi/komodo/README.md).
 
 Cada host tem sua própria `proxy_network`. O **NPM de entrada** é o do **Pi 5** (`*.local` → `10.0.0.x`): apps locais vão direto aos containers; apps no Dell são **repassadas ao NPM do `dell3050`**. Os dois nós têm túnel Cloudflare para exposição na internet. Detalhes: [estratégia entre NPMs](apps/stacks/raspberrypi/admin/README.md#estratégia-de-comunicação-entre-os-npms).
 
-Os clientes de IA (Cursor, OpenCode) falam com um **gateway de MCPs** no Pi 5. Cada grupo recorta um conjunto de servidores — Komodo, proxy, Grafana, Home Assistant, GitHub. Detalhes: [MCPs](apps/mcps/README.md).
+Os clientes de IA (Cursor, OpenCode) falam com um **gateway de MCPs** no Pi 5. Cada grupo recorta um conjunto de servidores — Komodo, proxy, Grafana, Home Assistant, GitHub. Detalhes: [MCPs](apps/stacks/raspberrypi/mcps/README.md).
 
 | Área               | Função / host                                             |
 | ------------------ | --------------------------------------------------------- |
@@ -90,8 +90,8 @@ Os clientes de IA (Cursor, OpenCode) falam com um **gateway de MCPs** no Pi 5. C
 
 | Documento                             | Descrição                                                      |
 | ------------------------------------- | -------------------------------------------------------------- |
-| [Komodo](apps/komodo/README.md)       | Core no Pi 5; Periphery em cada host — ponto de partida da infra |
-| [MCPs](apps/mcps/README.md)           | Gateway MCPJungle e grupos usados por Cursor e OpenCode     |
+| [Komodo](apps/stacks/raspberrypi/komodo/README.md)       | Core no Pi 5; Periphery em cada host — ponto de partida da infra |
+| [MCPs](apps/stacks/raspberrypi/mcps/README.md)           | Gateway MCPJungle e grupos usados por Cursor e OpenCode     |
 | [Descontinuados](DESCONTINUADOS.md)   | Portainer, Webmin e AdGuard — por que saíram                 |
 
 
@@ -102,7 +102,9 @@ Os clientes de IA (Cursor, OpenCode) falam com um **gateway de MCPs** no Pi 5. C
 
 | Stack | Host | Descrição |
 | ----- | ---- | --------- |
+| [komodo](apps/stacks/raspberrypi/komodo/README.md) | Pi 5 | Core, Periphery e MongoDB — sobe por `docker compose`, fora do sync |
 | [admin](apps/stacks/raspberrypi/admin/README.md) | Pi 5 | NPM de entrada, Tunnel, Filebrowser e MQTT `1883` |
+| [mcps](apps/stacks/raspberrypi/mcps/README.md) | Pi 5 | Gateway MCPJungle e servidores MCP |
 | [telemetria](apps/stacks/raspberrypi/telemetria/README.md) | Pi 5 | Grafana, InfluxDB, Mosquitto, Telegraf e coletor do Komodo |
 | [admin](apps/stacks/dell3050/admin/README.md) | Dell | NPM, Tunnel e Filebrowser |
 | [games](apps/stacks/dell3050/games/README.md) | Dell | RomM — gerenciador de ROMs |
@@ -133,12 +135,12 @@ Os clientes de IA (Cursor, OpenCode) falam com um **gateway de MCPs** no Pi 5. C
 ```
 home-server/
 ├── apps/
-│   ├── komodo/                    # Komodo Core + Periphery + Mongo (compose no host)
-│   ├── mcps/                      # Gateway MCPJungle e servidores MCP
 │   ├── home_assistant/            # Documentação dos apps do HA
 │   └── stacks/
 │       ├── raspberrypi/           # hostname raspberrypi (Pi 5)
+│       │   ├── komodo/            # Komodo Core + Periphery + Mongo (compose no host)
 │       │   ├── admin/             # NPM de entrada, túnel, Filebrowser
+│       │   ├── mcps/              # Gateway MCPJungle e servidores MCP
 │       │   └── telemetria/        # Grafana / Influx / MQTT + coletor do Komodo
 │       └── dell3050/              # hostname dell3050 (OptiPlex 3050 Micro)
 │           ├── admin/             # NPM, túnel, Filebrowser

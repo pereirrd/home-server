@@ -1,6 +1,6 @@
 # Komodo
 
-Gerenciador de containers do home server. Substituiu o Portainer — o motivo está em [DESCONTINUADOS.md](../../DESCONTINUADOS.md). Diferente das stacks em `apps/stacks/`, o Komodo **não é implantado por ele mesmo**: sobe por `docker compose` no Raspberry Pi 5, porque é a ferramenta que passa a gerenciar as demais stacks.
+Gerenciador de containers do home server. Substituiu o Portainer — o motivo está em [DESCONTINUADOS.md](../../../../DESCONTINUADOS.md). Esta stack fica junto das outras do Raspberry Pi 5, mas **não é implantada pelo próprio Komodo**: sobe por `docker compose` no host, porque é a ferramenta que passa a gerenciar as demais.
 
 ## Sobre o Komodo
 
@@ -64,12 +64,12 @@ A stack `komodo` **não** entra no `stacks.toml`. Ela sobe por `docker compose` 
 
 | Servidor no Core | Stacks gerenciadas pelo Komodo | Fora do sync |
 | ---------------- | ------------------------------ | ------------ |
-| `raspberrypi` | [admin](../stacks/raspberrypi/admin/README.md), [telemetria](../stacks/raspberrypi/telemetria/README.md), [mcps](../mcps/README.md) | este compose (`komodo`) |
-| `dell3050` | [admin](../stacks/dell3050/admin/README.md), [games](../stacks/dell3050/games/README.md), [immich](../stacks/dell3050/immich/README.md), [stream](../stacks/dell3050/stream/README.md), [seafile](../stacks/dell3050/seafile/README.md) | Periphery local |
+| `raspberrypi` | [admin](../admin/README.md), [telemetria](../telemetria/README.md), [mcps](../mcps/README.md) | este compose (`komodo`) |
+| `dell3050` | [admin](../../dell3050/admin/README.md), [games](../../dell3050/games/README.md), [immich](../../dell3050/immich/README.md), [stream](../../dell3050/stream/README.md), [seafile](../../dell3050/seafile/README.md) | Periphery local |
 
 ## Arquitetura de rede
 
-O Core publica `9120` e entra na rede externa `proxy_network` do Pi 5. O acesso à interface passa pelo [Nginx Proxy Manager](../stacks/raspberrypi/admin/README.md) de entrada, no host `komodo.local.meudominio.me`, com destino `http://komodo-core:9120`.
+O Core publica `9120` e entra na rede externa `proxy_network` do Pi 5. O acesso à interface passa pelo [Nginx Proxy Manager](../admin/README.md) de entrada, no host `komodo.local.meudominio.me`, com destino `http://komodo-core:9120`.
 
 O Mongo **não** entra na `proxy_network` e não publica porta no host.
 
@@ -98,7 +98,7 @@ No Raspberry Pi 5, pelo terminal:
 
 ```bash
 docker network create proxy_network
-cd apps/komodo
+cd apps/stacks/raspberrypi/komodo
 cp env.example .env
 docker compose up -d
 ```
@@ -111,6 +111,6 @@ No Dell, o Periphery é um compose à parte, com o mesmo par de chaves do Core, 
 
 - [Komodo](https://komo.do/)
 - [mbecker20/komodo](https://github.com/mbecker20/komodo)
-- [Stacks Docker deste repositório](../stacks/raspberrypi/admin/README.md)
+- [Stacks Docker deste repositório](../admin/README.md)
 - [MCPs — inclusive o servidor MCP do Komodo](../mcps/README.md)
-- [Aplicações descontinuadas — Portainer](../../DESCONTINUADOS.md)
+- [Aplicações descontinuadas — Portainer](../../../../DESCONTINUADOS.md)

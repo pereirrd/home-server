@@ -1,7 +1,7 @@
 # Raspberry Pi 5
 
 
-Placa principal da infraestrutura de containers. Roda [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/), hospedando o [Komodo](../../../../apps/komodo/README.md) (Core) e as [stacks Docker](../../../../apps/stacks/raspberrypi/admin/README.md) deste nó.
+Placa principal da infraestrutura de containers. Roda [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/), hospedando o [Komodo](../../../../apps/stacks/raspberrypi/komodo/README.md) (Core) e as [stacks Docker](../../../../apps/stacks/raspberrypi/admin/README.md) deste nó.
 
 ### Especificações da placa
 
@@ -65,7 +65,7 @@ raspberrypi (Pi 5)
 
 **RomM**, **Immich**, **stream** e **Seafile** rodam no [Dell OptiPlex 3050 Micro](../../../dell3050/README.md) (`dell3050`), não neste nó. O Periphery de lá é quem executa essas stacks; o Core continua aqui.
 
-Documentação: [Komodo](../../../../apps/komodo/README.md) · [MCPs](../../../../apps/mcps/README.md) · [admin](../../../../apps/stacks/raspberrypi/admin/README.md) · [telemetria](../../../../apps/stacks/raspberrypi/telemetria/README.md).
+Documentação: [Komodo](../../../../apps/stacks/raspberrypi/komodo/README.md) · [MCPs](../../../../apps/stacks/raspberrypi/mcps/README.md) · [admin](../../../../apps/stacks/raspberrypi/admin/README.md) · [telemetria](../../../../apps/stacks/raspberrypi/telemetria/README.md).
 
 ---
 

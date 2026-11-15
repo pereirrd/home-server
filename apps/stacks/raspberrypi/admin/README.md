@@ -1,6 +1,6 @@
 # Admin
 
-Stack de ferramentas administrativas do home server. Reúne o proxy reverso, o túnel Cloudflare e o [Filebrowser](https://filebrowser.org/). Os servidores MCP ficam na stack [mcps](../../../mcps/README.md), não aqui. O deploy é feito pelo [Komodo](../../../komodo/README.md).
+Stack de ferramentas administrativas do home server. Reúne o proxy reverso, o túnel Cloudflare e o [Filebrowser](https://filebrowser.org/). Os servidores MCP ficam na stack [mcps](../mcps/README.md), não aqui. O deploy é feito pelo [Komodo](../komodo/README.md).
 
 **Onde roda:** a stack `admin` existe nos **dois** hosts Docker. O conjunto de apps é o mesmo; o Pi 5 publica a porta MQTT `1883` a mais:
 
@@ -138,7 +138,7 @@ O [Filebrowser](https://filebrowser.org/) expõe uma interface web para navegar 
 
 ### Servidores MCP
 
-Não fazem parte desta stack. O gateway e os MCPs do Komodo e do Nginx Proxy Manager estão em [apps/mcps](../../../mcps/README.md). O Proxy Host `mcp.local.meudominio.me` neste NPM aponta para `mcpjungle-server:8080`. O do Komodo aponta para `komodo-core:9120`.
+Não fazem parte desta stack. O gateway e os MCPs do Komodo e do Nginx Proxy Manager estão em [mcps](../mcps/README.md). O Proxy Host `mcp.local.meudominio.me` neste NPM aponta para `mcpjungle-server:8080`. O do Komodo aponta para `komodo-core:9120`.
 
 ### Cloudflare Tunnel
 
@@ -162,7 +162,7 @@ Compose e variáveis neste diretório. NPM de **entrada** da LAN; inclui Filebro
 
 ### Dell (`dell3050`)
 
-Compose e variáveis em [`../../dell3050/admin/`](../../dell3050/admin/). Sem porta MQTT no NPM. Os MCPs ficam na stack [mcps](../../../mcps/README.md), neste Pi.
+Compose e variáveis em [`../../dell3050/admin/`](../../dell3050/admin/). Sem porta MQTT no NPM. Os MCPs ficam na stack [mcps](../mcps/README.md), neste Pi.
 
 | Variável | Descrição |
 | --- | --- |

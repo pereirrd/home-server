@@ -70,7 +70,7 @@ O Telegraf consome esses tópicos e grava as séries no bucket do InfluxDB. No G
 | `influxdb` → `telemetria-influxdb` | `influxdb:2.7` | Séries temporais (retention init `30d`) |
 | `telegraf` | `telegraf:1.32` | Consome MQTT e grava no Influx |
 | `grafana` → `telemetria-grafana` | `grafana/grafana:11.6.16` | Dashboards |
-| `portainer-collector` | imagem local (`STACK_DIR/portainer`) | Lê a API do [Komodo](../../../komodo/README.md) e publica o inventário Docker |
+| `portainer-collector` | imagem local (`STACK_DIR/portainer`) | Lê a API do [Komodo](../komodo/README.md) e publica o inventário Docker |
 
 ## Coletor do Komodo (`portainer-collector`)
 

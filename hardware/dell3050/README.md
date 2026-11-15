@@ -36,7 +36,7 @@ Nó x86 com três discos de papéis separados, complementando o Raspberry Pi 5 (
 
 Hostname na rede: **`dell3050`**.
 
-**Komodo:** neste host **não** roda o Core — só o **Periphery**. Criar e atualizar as stacks do Dell é feito pela UI do Core no Pi 5; o Periphery daqui executa o compose que está no disco desta máquina. Detalhes: [Komodo](../../apps/komodo/README.md).
+**Komodo:** neste host **não** roda o Core — só o **Periphery**. Criar e atualizar as stacks do Dell é feito pela UI do Core no Pi 5; o Periphery daqui executa o compose que está no disco desta máquina. Detalhes: [Komodo](../../apps/stacks/raspberrypi/komodo/README.md).
 
 Acesso local às apps deste nó: o cliente fala com o **NPM do Pi 5**, que **repassa** ao NPM deste host. Exposição à internet: túnel Cloudflare **deste** nó. Ver [estratégia entre NPMs](../../apps/stacks/raspberrypi/admin/README.md#estratégia-de-comunicação-entre-os-npms).
 
@@ -75,7 +75,7 @@ dell3050
 └── seafile                  → Seafile + Seadoc + MariaDB + Redis
 ```
 
-Documentação: [Komodo](../../apps/komodo/README.md) · [admin](../../apps/stacks/dell3050/admin/README.md) · [games](../../apps/stacks/dell3050/games/README.md) · [immich](../../apps/stacks/dell3050/immich/README.md) · [stream](../../apps/stacks/dell3050/stream/README.md) · [seafile](../../apps/stacks/dell3050/seafile/README.md). Inventário do Pi 5: [pi5/v2](../raspberry_pi/pi5/v2/README.md).
+Documentação: [Komodo](../../apps/stacks/raspberrypi/komodo/README.md) · [admin](../../apps/stacks/dell3050/admin/README.md) · [games](../../apps/stacks/dell3050/games/README.md) · [immich](../../apps/stacks/dell3050/immich/README.md) · [stream](../../apps/stacks/dell3050/stream/README.md) · [seafile](../../apps/stacks/dell3050/seafile/README.md). Inventário do Pi 5: [pi5/v2](../raspberry_pi/pi5/v2/README.md).
 
 ---
 

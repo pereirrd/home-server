@@ -1,6 +1,6 @@
 # Admin — Dell OptiPlex 3050 Micro
 
-Stack administrativa do host **`dell3050`**. Reúne o proxy reverso deste nó, o túnel Cloudflare e o [Filebrowser](https://filebrowser.org/). O deploy é feito pelo [Komodo](../../../komodo/README.md).
+Stack administrativa do host **`dell3050`**. Reúne o proxy reverso deste nó, o túnel Cloudflare e o [Filebrowser](https://filebrowser.org/). O deploy é feito pelo [Komodo](../../raspberrypi/komodo/README.md).
 
 A mesma stack existe no Raspberry Pi 5, que publica a porta MQTT `1883` a mais. O desenho dos dois NPMs, o repasse Pi 5 → Dell e os túneis estão em [admin do Pi 5](../../raspberrypi/admin/README.md).
 
@@ -32,7 +32,7 @@ docker network create proxy_network
 
 ## Configuração
 
-Sem porta MQTT no NPM. Os servidores MCP ficam no Pi 5, na stack [mcps](../../../mcps/README.md); o deste host só é alcançado pela LAN, a partir de `npm-mcp-dell3050`. Copie `env.example` para `.env`.
+Sem porta MQTT no NPM. Os servidores MCP ficam no Pi 5, na stack [mcps](../../raspberrypi/mcps/README.md); o deste host só é alcançado pela LAN, a partir de `npm-mcp-dell3050`. Copie `env.example` para `.env`.
 
 | Variável | Descrição |
 | --- | --- |
@@ -45,7 +45,7 @@ No painel do NPM (`http://<dell3050>:81`), os Proxy Hosts apontam para o **nome 
 ## Referências
 
 - [Admin do Pi 5 — NPM, túnel e estratégia entre hosts](../../raspberrypi/admin/README.md)
-- [Komodo](../../../komodo/README.md)
+- [Komodo](../../raspberrypi/komodo/README.md)
 - [Nginx Proxy Manager](https://nginxproxymanager.com/guide/)
 - [Filebrowser](https://filebrowser.org/)
 - [Cloudflare Tunnel](https://developers.cloudflare.com/tunnel/)

@@ -2,7 +2,7 @@
 
 Stack de servidores [MCP](https://modelcontextprotocol.io/) (Model Context Protocol) do home server. Roda no **Raspberry Pi 5** (`raspberrypi`), no projeto Compose `mcps`, e é implantada pelo [Komodo](../komodo/README.md). O ponto de entrada dos clientes é um **gateway**: o [MCPJungle](https://github.com/mcpjungle/mcpjungle).
 
-Nenhum serviço publica porta no host. O [Nginx Proxy Manager](../stacks/raspberrypi/admin/README.md) de entrada alcança o gateway em `http://mcpjungle-server:8080` na `proxy_network`. O hostname local é `mcp.local.meudominio.me`.
+Nenhum serviço publica porta no host. O [Nginx Proxy Manager](../admin/README.md) de entrada alcança o gateway em `http://mcpjungle-server:8080` na `proxy_network`. O hostname local é `mcp.local.meudominio.me`.
 
 ## Serviços
 
@@ -119,4 +119,4 @@ Recriar o Postgres sem o diretório `MCPJUNGLE_DATA_PATH` perde os servidores re
 - [MCPJungle](https://github.com/mcpjungle/mcpjungle)
 - [nginx-proxy-manager-mcp](https://github.com/b3nw/nginx-proxy-manager-mcp)
 - [Komodo](../komodo/README.md)
-- [Admin do Pi 5 — NPM de entrada](../stacks/raspberrypi/admin/README.md)
+- [Admin do Pi 5 — NPM de entrada](../admin/README.md)
