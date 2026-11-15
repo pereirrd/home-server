@@ -2,7 +2,7 @@
 
 Stack de serviços de jogos do home server. Hospeda o [RomM](https://romm.app/), um gerenciador de ROMs self-hosted acessado pelo navegador.
 
-**Onde roda:** Raspberry Pi 5 (`raspberrypi`) — ver [pi5/v2](../../../../hardware/raspberry_pi/pi5/v2/README.md).
+**Onde roda:** Dell OptiPlex 3050 Micro (`dell3050`) — ver [hardware/dell3050](../../../../hardware/dell3050/README.md). O NPM de entrada continua no Raspberry Pi 5 e repassa este host; ver [admin do Pi 5](../../raspberrypi/admin/README.md).
 
 ## Arquitetura de rede
 

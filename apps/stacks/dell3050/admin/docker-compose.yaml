@@ -16,31 +16,6 @@ services:
       - admin_default
       - proxy_network
 
-  # Automação de backup para configurações e banco de dados do Portainer
-  portainer-backup:
-    image: savagesoftware/portainer-backup:latest
-    container_name: portainer-backup
-    restart: unless-stopped
-    command: schedule
-    environment:
-      TZ: ${TZ}
-      PUID: ${PUID}
-      PGID: ${PGID}
-      PORTAINER_BACKUP_URL: ${PORTAINER_URL}
-      PORTAINER_BACKUP_TOKEN: ${PORTAINER_BACKUP_TOKEN}
-      PORTAINER_BACKUP_OVERWRITE: ${PORTAINER_BACKUP_OVERWRITE}
-      PORTAINER_BACKUP_SCHEDULE: ${PORTAINER_BACKUP_SCHEDULE}
-      PORTAINER_BACKUP_STACKS: ${PORTAINER_BACKUP_STACKS}
-      PORTAINER_BACKUP_DRYRUN: ${PORTAINER_BACKUP_DRYRUN}
-      PORTAINER_BACKUP_CONCISE: ${PORTAINER_BACKUP_CONCISE}
-      PORTAINER_BACKUP_DIRECTORY: ${PORTAINER_BACKUP_DIRECTORY}
-      PORTAINER_BACKUP_FILENAME: ${PORTAINER_BACKUP_FILENAME}
-    volumes:
-      - ${PORTAINER_BACKUP_HOST_PATH}:/backup:rw
-    networks:
-      - admin_default
-      - proxy_network
-
   # Proxy manager (nó remoto — recebe repasse do NPM do Pi 5)
   nginx:
     image: jc21/nginx-proxy-manager:latest

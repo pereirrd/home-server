@@ -1,6 +1,6 @@
 # Hardware — Dell
 
-Máquinas x86 adicionadas à infraestrutura do home server. A documentação de software (stacks, Portainer, Home Assistant) está no [README principal](../../README.md). Os Raspberry Pi continuam em [hardware/raspberry_pi](../raspberry_pi/README.md).
+Máquinas x86 adicionadas à infraestrutura do home server. A documentação de software (stacks, Komodo, Home Assistant) está no [README principal](../../README.md). Os Raspberry Pi continuam em [hardware/raspberry_pi](../raspberry_pi/README.md).
 
 ## Visão geral
 
@@ -34,7 +34,7 @@ Nó x86 compacto com disco de massa de 1 TB, complementando o Raspberry Pi 5 (co
 
 Hostname na rede: **`dell3050`**.
 
-**Portainer:** neste host **não** roda o Portainer CE — só o **`portainer-agent`**. O gerenciamento das stacks do Dell (criar/editar stacks, containers, etc.) é feito pela **única** UI do Portainer no Pi 5, apontando para este agent. Detalhes: [Portainer — CE + Agent](../../apps/portainer/README.md#uma-única-instância--ce-no-pi-5-agent-no-dell).
+**Komodo:** neste host **não** roda o Core — só o **Periphery**. Criar e atualizar as stacks do Dell é feito pela UI do Core no Pi 5; o Periphery daqui executa o compose que está no disco desta máquina. Detalhes: [Komodo](../../apps/komodo/README.md).
 
 Acesso local às apps deste nó: o cliente fala com o **NPM do Pi 5**, que **repassa** ao NPM deste host. Exposição à internet: túnel Cloudflare **deste** nó. Ver [estratégia entre NPMs](../../apps/stacks/raspberrypi/admin/README.md#estratégia-de-comunicação-entre-os-npms).
 
@@ -50,20 +50,24 @@ Inventário a partir de `docker compose ls` / `docker ps` neste host. O Pi 4 (Ho
 
 | Stack / origem | Containers | Papel |
 | -------------- | ---------- | ----- |
-| **admin** | `nginx-proxy-manager`, `cloudflared_tunnel`, `filebrowser`, `portainer-backup` | Proxy, túnel Cloudflare, navegação de arquivos e backup do Portainer |
+| **komodo** (Periphery) | `komodo-periphery` | Agente local. Sem UI — o Core fica no Pi 5 |
+| **admin** | `nginx-proxy-manager`, `cloudflared_tunnel`, `filebrowser` | Proxy, túnel Cloudflare e navegação de arquivos |
+| **games** | `romm`, `romm-db` | Gerenciador de ROMs |
+| **immich** | `immich_server`, `immich_machine_learning`, `immich_postgres`, `immich_redis` | Fotos e vídeos |
 | **stream** | `jellyfin`, `seerr`, `sonarr`, `radarr`, `bazarr`, `jackett`, `prowlarr`, `qbittorrent` | Pipeline *Arr + streaming (usa o HDD) |
 | **seafile** | `seafile`, `seadoc`, `seafile-mysql`, `seafile-redis` | Arquivos sync / colaboração (Seafile) |
-| *(sem stack Compose)* | `portainer-agent` | Agent remoto — **não** é um segundo Portainer; a UI fica no Pi 5 |
 
 ```
 dell3050
-├── portainer-agent          ← só Agent (UI do Portainer fica no raspberrypi)
-├── admin                    → NPM, Cloudflare Tunnel, Filebrowser, portainer-backup
+├── komodo-periphery         ← só Periphery (UI do Komodo fica no raspberrypi)
+├── admin                    → NPM, Cloudflare Tunnel, Filebrowser
+├── games                    → RomM + MariaDB
+├── immich                   → Immich (server, ML, Postgres, Redis/Valkey)
 ├── stream                   → *Arr + Jellyfin + Seerr + qBittorrent
 └── seafile                  → Seafile + Seadoc + MariaDB + Redis
 ```
 
-Documentação das stacks: [admin](../../apps/stacks/dell3050/admin/README.md) · [stream](../../apps/stacks/dell3050/stream/README.md) · [seafile](../../apps/stacks/dell3050/seafile/README.md). Inventário do Pi 5: [pi5/v2](../raspberry_pi/pi5/v2/README.md).
+Documentação: [Komodo](../../apps/komodo/README.md) · [admin](../../apps/stacks/dell3050/admin/README.md) · [games](../../apps/stacks/dell3050/games/README.md) · [immich](../../apps/stacks/dell3050/immich/README.md) · [stream](../../apps/stacks/dell3050/stream/README.md) · [seafile](../../apps/stacks/dell3050/seafile/README.md). Inventário do Pi 5: [pi5/v2](../raspberry_pi/pi5/v2/README.md).
 
 ---
 

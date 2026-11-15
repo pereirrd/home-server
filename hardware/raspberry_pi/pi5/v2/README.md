@@ -1,7 +1,7 @@
 # Raspberry Pi 5
 
 
-Placa principal da infraestrutura de containers. Roda [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/), hospedando o [Portainer](../../../../apps/portainer/README.md) e as [stacks Docker](../../../../apps/stacks/raspberrypi/admin/README.md).
+Placa principal da infraestrutura de containers. Roda [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/), hospedando o [Komodo](../../../../apps/komodo/README.md) (Core) e as [stacks Docker](../../../../apps/stacks/raspberrypi/admin/README.md) deste nó.
 
 ### Especificações da placa
 
@@ -50,24 +50,22 @@ Este host concentra o **NPM de entrada** da LAN (`*.local` → IP estático **10
 
 | Stack / origem | Containers | Papel |
 | -------------- | ---------- | ----- |
-| **portainer** | `portainer` | **Único** Portainer CE da infra — gerencia o Docker local e o Dell via Agent |
-| **admin** | `nginx-proxy-manager`, `cloudflared_tunnel`, `filebrowser`, `portainer-backup`, `portainer-mcp` | Proxy, túnel, Filebrowser, backup e MCP do Portainer |
-| **games** | `romm`, `romm-db` | Gerenciador de ROMs |
-| **immich** | `immich_server`, `immich_machine_learning`, `immich_postgres`, `immich_redis` | Fotos e vídeos |
-| **telemetria** | `telemetria-grafana-1`, `telemetria-influxdb-1`, `telemetria-mosquitto-1`, `telemetria-telegraf-1` | Observabilidade (Grafana, InfluxDB, Mosquitto, Telegraf) |
+| **komodo** | `komodo-core`, `komodo-periphery`, `komodo-mongo` | Core da infra (UI/API), Periphery deste host e banco. Sobe por `docker compose`, fora do sync |
+| **admin** | `nginx-proxy-manager`, `cloudflared_tunnel`, `filebrowser` | NPM de entrada, túnel e Filebrowser |
+| **mcps** | `mcpjungle-server`, `mcpjungle-db`, `komodo-mcp-server`, `npm-mcp-raspberrypi`, `npm-mcp-dell3050` | Gateway de MCPs e servidores do Komodo e dos dois NPMs |
+| **telemetria** | `grafana`, `influxdb`, `mosquitto`, `telegraf`, `portainer-collector` | Observabilidade. O coletor lê a API do Komodo e publica no prefixo MQTT `portainer/` |
 
 ```
 raspberrypi (Pi 5)
-├── portainer                → Portainer CE (compose standalone)
-├── admin                    → NPM, Cloudflare Tunnel, Filebrowser, portainer-backup, portainer-mcp
-├── games                    → RomM + MariaDB
-├── immich                   → Immich (server, ML, Postgres, Redis/Valkey)
-└── telemetria               → Grafana + InfluxDB + Mosquitto + Telegraf
+├── komodo                   → Core + Periphery + MongoDB (compose no host)
+├── admin                    → NPM de entrada, Cloudflare Tunnel, Filebrowser
+├── mcps                     → MCPJungle, Postgres, MCP do Komodo, MCP dos dois NPMs
+└── telemetria               → Grafana + InfluxDB + Mosquitto + Telegraf + coletor
 ```
 
-A stack **stream** e o **Seafile** rodam no [Dell OptiPlex 3050 Micro](../../../dell3050/README.md) (`dell3050`), não neste nó.
+**RomM**, **Immich**, **stream** e **Seafile** rodam no [Dell OptiPlex 3050 Micro](../../../dell3050/README.md) (`dell3050`), não neste nó. O Periphery de lá é quem executa essas stacks; o Core continua aqui.
 
-Documentação: [Portainer](../../../../apps/portainer/README.md) · [admin](../../../../apps/stacks/raspberrypi/admin/README.md) · [games](../../../../apps/stacks/raspberrypi/games/README.md) · [immich](../../../../apps/stacks/raspberrypi/immich/README.md) · [telemetria](../../../../apps/stacks/raspberrypi/telemetria/README.md).
+Documentação: [Komodo](../../../../apps/komodo/README.md) · [MCPs](../../../../apps/mcps/README.md) · [admin](../../../../apps/stacks/raspberrypi/admin/README.md) · [telemetria](../../../../apps/stacks/raspberrypi/telemetria/README.md).
 
 ---
 
@@ -80,7 +78,7 @@ Documentação: [Portainer](../../../../apps/portainer/README.md) · [admin](../
 - [Configuração v1 (Waveshare + Geekworm)](../v1/README.md)
 
 ### Outros nós
-- [Dell OptiPlex 3050 Micro](../../../dell3050/README.md) — HDD 1 TB (stream, seafile, admin, portainer-agent)
+- [Dell OptiPlex 3050 Micro](../../../dell3050/README.md) — HDD 1 TB (games, immich, stream, seafile, admin, Periphery)
 
 ### Imagens do Hardware
 ![Frontal](../../../../shared/raspberrypi5/v2/front.jpg)

@@ -2,7 +2,7 @@
 
 Stack de gerenciamento de fotos e vídeos do home server. Hospeda o [Immich](https://immich.app/), alternativa self-hosted de alto desempenho a serviços de nuvem como Google Photos.
 
-**Onde roda:** Raspberry Pi 5 (`raspberrypi`) — ver [pi5/v2](../../../../hardware/raspberry_pi/pi5/v2/README.md).
+**Onde roda:** Dell OptiPlex 3050 Micro (`dell3050`) — ver [hardware/dell3050](../../../../hardware/dell3050/README.md). O NPM de entrada continua no Raspberry Pi 5 e repassa este host; ver [admin do Pi 5](../../raspberrypi/admin/README.md).
 
 ## Arquitetura de rede
 

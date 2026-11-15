@@ -1,20 +1,20 @@
 # Admin
 
-Stack de ferramentas administrativas do home server. Reúne o proxy reverso, o backup do gerenciador de containers, o túnel Cloudflare e o [Filebrowser](https://filebrowser.org/).
+Stack de ferramentas administrativas do home server. Reúne o proxy reverso, o túnel Cloudflare e o [Filebrowser](https://filebrowser.org/). Os servidores MCP ficam na stack [mcps](../../../mcps/README.md), não aqui. O deploy é feito pelo [Komodo](../../../komodo/README.md).
 
-**Onde roda:** a stack `admin` existe nos **dois** hosts Docker, com conjuntos de apps **diferentes**:
+**Onde roda:** a stack `admin` existe nos **dois** hosts Docker. O conjunto de apps é o mesmo; o Pi 5 publica a porta MQTT `1883` a mais:
 
 | Host | Hostname | Apps na stack `admin` | Compose neste repo |
 | ---- | -------- | --------------------- | ------------------ |
-| Raspberry Pi 5 | `raspberrypi` | NPM (entrada + MQTT `1883`), Cloudflare Tunnel, Filebrowser, portainer-backup, **portainer-mcp** | [`./`](./) |
-| Dell OptiPlex 3050 Micro | `dell3050` | NPM, Cloudflare Tunnel, Filebrowser, portainer-backup | [`../../dell3050/admin/`](../../dell3050/admin/) |
+| Raspberry Pi 5 | `raspberrypi` | NPM (entrada + MQTT `1883`), Cloudflare Tunnel, Filebrowser | [`./`](./) |
+| Dell OptiPlex 3050 Micro | `dell3050` | NPM, Cloudflare Tunnel, Filebrowser | [`../../dell3050/admin/`](../../dell3050/admin/) |
 
 Cada nó tem a própria rede Docker (`proxy_network` local àquele host). Containers do Pi 5 **não** resolvem por nome containers do Dell (e vice-versa) — por isso o proxy entre máquinas passa pelos NPMs, não pela rede Compose compartilhada.
 
 ### Arquivos de exemplo
 
 ```
-apps/stacks/raspberrypi/admin/   # este diretório — Pi 5 (entrada *.local + MCP + MQTT)
+apps/stacks/raspberrypi/admin/   # este diretório — Pi 5 (entrada *.local + MQTT)
 ├── README.md
 ├── docker-compose.yaml
 └── env.example
@@ -33,14 +33,14 @@ Há **dois Nginx Proxy Managers**, um em cada máquina. Os papéis são distinto
 | Papel | Host | Função |
 | ----- | ---- | ------ |
 | **NPM de entrada (fronteira)** | Raspberry Pi 5 (`raspberrypi`, IP estático **10.0.0.x**) | Único ponto de entrada do domínio **local** (`*.local.meudominio.me`). Decide se a app está no próprio Pi 5 ou no Dell. |
-| **NPM do Dell (nó remoto)** | `dell3050` | Recebe o repasse do NPM do Pi 5 e entrega a requisição aos containers da `proxy_network` **local do Dell** (stream, seafile, etc.). |
+| **NPM do Dell (nó remoto)** | `dell3050` | Recebe o repasse do NPM do Pi 5 e entrega a requisição aos containers da `proxy_network` **local do Dell** (games, immich, stream, seafile, etc.). |
 
 ### Domínio local — fluxo pelo Pi 5
 
 No DNS da LAN (ou hosts), o registro do tipo **`*.local.meudominio.me`** aponta para o **Pi 5**. Todo acesso “pela rede de casa” chega primeiro ao NPM de entrada:
 
-1. **App no Pi 5** (RomM, Immich, Portainer, Grafana, …) — o NPM do Pi 5 encaminha direto para o **nome do container** na `proxy_network` local (ex.: `http://immich_server:2283`).
-2. **App no Dell** (Jellyfin, Seerr, Seafile, …) — o NPM do Pi 5 **não** alcança esses containers por nome Docker. Em vez disso, o Proxy Host no Pi 5 aponta para o **NPM do Dell** (IP/hostname LAN do `dell3050`, portas `80`/`443`). O NPM do Dell, que enxerga a `proxy_network` daquela máquina, completa o roteamento até o container (ex.: `http://jellyfin:8096`).
+1. **App no Pi 5** (Grafana, Komodo, Filebrowser, gateway MCP, …) — o NPM do Pi 5 encaminha direto para o **nome do container** na `proxy_network` local (ex.: `http://komodo-core:9120`, `http://mcpjungle-server:8080`).
+2. **App no Dell** (RomM, Immich, Jellyfin, Seafile, …) — o NPM do Pi 5 **não** alcança esses containers por nome Docker. Em vez disso, o Proxy Host no Pi 5 aponta para o **NPM do Dell** (IP/hostname LAN do `dell3050`, portas `80`/`443`). O NPM do Dell, que enxerga a `proxy_network` daquela máquina, completa o roteamento até o container (ex.: `http://jellyfin:8096`, `http://immich_server:2283`).
 
 ```
 Cliente (LAN)  →  *.local.meudominio.me  →  NPM Pi 5 (10.0.0.x)
@@ -50,7 +50,7 @@ Cliente (LAN)  →  *.local.meudominio.me  →  NPM Pi 5 (10.0.0.x)
            App no Pi 5                  App no Dell                     │
            (proxy_network Pi 5)         NPM Dell (LAN)                  │
                                         → proxy_network Dell            │
-                                          → jellyfin, seafile, …        │
+                                          → romm, immich, jellyfin, …   │
 ```
 
 Em outras palavras: o NPM do Pi 5 é o **roteador de hostnames** da casa; o NPM do Dell é um **hop interno** só quando o destino vive no x86.
@@ -80,15 +80,16 @@ Nos containers de cada máquina, em geral **não** se publicam portas no host �
 proxy_network (local)
   ├── nginx-proxy-manager   ← entrada *.local + destino de apps locais
   ├── cloudflared
-  ├── filebrowser, portainer-backup, portainer-mcp
-  ├── portainer, romm, immich_*, grafana, …
+  ├── filebrowser
+  ├── komodo-core, mcpjungle-server, grafana, …
   └── (repasse LAN) ──► NPM do dell3050
 
 ── dell3050 ──────────────────────────────────────
 proxy_network (local)
   ├── nginx-proxy-manager   ← recebe repasse do Pi 5 / túnel Cloudflare deste nó
   ├── cloudflared
-  ├── filebrowser, portainer-backup
+  ├── filebrowser
+  ├── romm, immich_server
   ├── jellyfin, seerr, sonarr, … (stream)
   └── seafile, seadoc, …
 ```
@@ -111,7 +112,7 @@ O [Nginx Proxy Manager](https://nginxproxymanager.com/) (NPM) publica as portas 
 
 | Destino da app | Forward Hostname no Proxy Host | Exemplo |
 | -------------- | ------------------------------ | ------- |
-| Container local | Nome do container na `proxy_network` do Pi 5 | `http://immich_server:2283` |
+| Container local | Nome do container na `proxy_network` do Pi 5 | `http://komodo-core:9120` |
 | Container no Dell | IP/hostname LAN do `dell3050` (NPM remoto) | `http://<ip-dell3050>:80` (o NPM do Dell faz o resto) |
 
 **No Dell (nó remoto):** os Proxy Hosts apontam para o **nome do container** na `proxy_network` local (ex.: `http://jellyfin:8096`, `http://seafile:80`), como em um setup de host único.
@@ -135,19 +136,9 @@ O [Filebrowser](https://filebrowser.org/) expõe uma interface web para navegar 
 
 **Referência:** [Filebrowser](https://filebrowser.org/)
 
-### Portainer MCP (somente Pi 5)
+### Servidores MCP
 
-No host `raspberrypi`, a stack admin inclui o [`portainer-mcp`](https://docs.portainer.io/) (`portainer/portainer-mcp:2.45`), expondo ferramentas MCP sobre a API do Portainer CE local (`PORTAINER_URL=http://portainer:9000`).
-
-Transporte HTTP na porta interna `PORTAINER_MCP_HTTP_PORT` (padrão `17717`). O acesso externo passa pelo NPM com **SSL termination**; por isso `PORTAINER_MCP_DANGEROUSLY_ALLOW_PLAINTEXT_HTTP=1` entre NPM e o container. Ajuste `PORTAINER_MCP_ALLOWED_HOSTS` e `PORTAINER_MCP_FORWARDED_ALLOW_IPS` ao hostname e à faixa da `proxy_network`.
-
-### Portainer Backup
-
-Utilitário para automatizar backups do [Portainer](https://www.portainer.io) via API. Conecta-se ao servidor Portainer com um access token e exporta periodicamente o banco de dados da instância em um arquivo `.tar.gz`. Opcionalmente, inclui os arquivos `docker-compose` das stacks criadas na interface web do Portainer.
-
-Nesta stack, o container roda no modo `schedule`, executando backups de forma contínua conforme a expressão cron definida em `PORTAINER_BACKUP_SCHEDULE`. Os arquivos gerados são gravados no volume montado em `/backup` (mapeado para `PORTAINER_BACKUP_HOST_PATH` no host). Como está na `proxy_network`, a URL do Portainer pode usar o hostname do container (por exemplo, `http://portainer:9000`).
-
-**Referência:** [SavageSoftware/portainer-backup](https://github.com/SavageSoftware/portainer-backup)
+Não fazem parte desta stack. O gateway e os MCPs do Komodo e do Nginx Proxy Manager estão em [apps/mcps](../../../mcps/README.md). O Proxy Host `mcp.local.meudominio.me` neste NPM aponta para `mcpjungle-server:8080`. O do Komodo aponta para `komodo-core:9120`.
 
 ### Cloudflare Tunnel
 
@@ -161,25 +152,21 @@ Há um `cloudflared` em **cada** host (`raspberrypi` e `dell3050`), cada um com 
 
 ### Raspberry Pi 5 (`raspberrypi`)
 
-Compose e variáveis neste diretório. NPM de **entrada** da LAN; inclui Filebrowser, portainer-mcp, backup, tunnel e publicação da porta **MQTT `1883`**.
+Compose e variáveis neste diretório. NPM de **entrada** da LAN; inclui Filebrowser, túnel e publicação da porta **MQTT `1883`**.
 
 | Variável | Descrição |
 | --- | --- |
-| `PORTAINER_URL` | URL do Portainer CE local (`http://portainer:9000`) — usada pelo backup e pelo MCP |
-| `PORTAINER_MCP_*` | Transporte, porta, hosts permitidos, log e plaintext HTTP atrás do NPM |
-| `PORTAINER_BACKUP_TOKEN` / `PORTAINER_BACKUP_*` | Agendamento e destino do backup |
 | `CLOUDFLARED_TUNNEL_TOKEN` | Token do túnel Cloudflare **deste** host |
 | `FILEBROWSER_*` | Raiz `/srv` e paths de database/config no host |
 | `NGINX_PROXY_*` | Dados e Let's Encrypt do NPM |
 
 ### Dell (`dell3050`)
 
-Compose e variáveis em [`../../dell3050/admin/`](../../dell3050/admin/). Sem MCP e sem porta MQTT no NPM.
+Compose e variáveis em [`../../dell3050/admin/`](../../dell3050/admin/). Sem porta MQTT no NPM. Os MCPs ficam na stack [mcps](../../../mcps/README.md), neste Pi.
 
 | Variável | Descrição |
 | --- | --- |
 | `CLOUDFLARED_TUNNEL_TOKEN` | Token do túnel Cloudflare **deste** host |
-| `PORTAINER_URL` | URL do Portainer CE no Pi 5 (alcançável pela LAN) |
-| `PORTAINER_BACKUP_*` / `FILEBROWSER_*` / `NGINX_PROXY_*` | Idem ao Pi 5, paths locais do Dell |
+| `FILEBROWSER_*` / `NGINX_PROXY_*` | Idem ao Pi 5, paths locais do Dell |
 
 Antes do deploy em cada host: `docker network create proxy_network` (se ainda não existir).

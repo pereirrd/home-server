@@ -28,7 +28,7 @@ Os ESP32 usados como Bluetooth trackers e captura de IRK na automação residenc
 
 Hostname: **`raspberrypi`**. Sistema operacional [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/). Armazenamento: **somente NVMe M.2 256 GB**.
 
-Em execução: o **único** [Portainer](apps/portainer/README.md) CE da infra, stacks **admin**, **games**, **immich** e **telemetria**. Inventário detalhado: [hardware/raspberry_pi/pi5/v2](hardware/raspberry_pi/pi5/v2/README.md).
+Em execução: o [Komodo](apps/komodo/README.md) (Core, Periphery e MongoDB), stacks **admin**, **telemetria** e **mcps** (gateway de MCPs). Inventário detalhado: [hardware/raspberry_pi/pi5/v2](hardware/raspberry_pi/pi5/v2/README.md).
 
 **Referências:** [Raspberry Pi 5](https://www.raspberrypi.com/products/raspberry-pi-5/) · [Introducing Raspberry Pi 5](https://www.raspberrypi.com/news/introducing-raspberry-pi-5/)
 
@@ -42,7 +42,7 @@ Dedicado ao [Home Assistant](apps/home_assistant/README.md). O HA roda **diretam
 
 Hostname: **`dell3050`**. Intel Core **i5 de 6ª geração**, **8 GB de RAM**, **HDD de 1 TB**.
 
-Em execução: **portainer-agent** (sem UI — gerenciado pelo CE do Pi 5), stacks **admin**, **stream** e **seafile**. Inventário: [hardware/dell3050](hardware/dell3050/README.md).
+Em execução: **Komodo Periphery** (sem UI — o Core fica no Pi 5), stacks **admin**, **games**, **immich**, **stream** e **seafile**. Inventário: [hardware/dell3050](hardware/dell3050/README.md).
 
 ## Visão geral
 
@@ -50,25 +50,31 @@ O home server combina serviços de infraestrutura, mídia, jogos, arquivos, tele
 
 ```
 raspberrypi (Pi 5)                         dell3050 (OptiPlex 3050 Micro)
-├── Portainer CE (única UI) ──agent──►     ├── portainer-agent (sem UI)
-├── admin (NPM, tunnel, filebrowser, …)    ├── admin (NPM, tunnel, filebrowser, …)
-├── games (RomM)                           ├── stream (*Arr + Jellyfin)
-├── immich                                 └── seafile
-└── telemetria (Grafana / Influx / MQTT)
+├── Komodo Core + MongoDB                  ├── Komodo Periphery (sem UI)
+├── Komodo Periphery                       ├── admin (NPM, tunnel, filebrowser)
+├── admin (NPM de entrada, tunnel, …)      ├── games (RomM)
+├── mcps (gateway MCPJungle + servidores)  ├── immich
+└── telemetria (Grafana / Influx / MQTT)   ├── stream (*Arr + Jellyfin)
+                                           └── seafile
 
-Home Assistant (Pi 4)    → monitoramento, HACS (AdGuard removido)
+Home Assistant (Pi 4)    → monitoramento, HACS
 Automations ESP32        → proxies Bluetooth para o HA
 ```
 
+O Core no Pi 5 gerencia as stacks dos **dois** hosts no modo *Files on Server*: o compose fica no disco de cada máquina e o Periphery daquela máquina executa o deploy. Detalhes: [Komodo](apps/komodo/README.md).
+
 Cada host tem sua própria `proxy_network`. O **NPM de entrada** é o do **Pi 5** (`*.local` → `10.0.0.x`): apps locais vão direto aos containers; apps no Dell são **repassadas ao NPM do `dell3050`**. Os dois nós têm túnel Cloudflare para exposição na internet. Detalhes: [estratégia entre NPMs](apps/stacks/raspberrypi/admin/README.md#estratégia-de-comunicação-entre-os-npms).
+
+Os clientes de IA (Cursor, OpenCode) falam com um **gateway de MCPs** no Pi 5. Cada grupo recorta um conjunto de servidores — Komodo, proxy, Grafana, Home Assistant, GitHub. Detalhes: [MCPs](apps/mcps/README.md).
 
 | Área               | Função / host                                             |
 | ------------------ | --------------------------------------------------------- |
-| **Portainer**      | **Só um CE** (Pi 5); Dell gerenciado via **Agent**        |
-| **Stacks**         | Serviços por contexto, deploy via Portainer               |
+| **Komodo**         | Core no Pi 5; Periphery no Pi 5 e no Dell                 |
+| **Stacks**         | Serviços por contexto; compose no disco, deploy no Komodo |
+| **MCPs**           | Gateway no Pi 5; grupos por host, telemetria, HA e Git    |
 | **Proxy local**    | NPM Pi 5 (entrada) → NPM Dell se a app estiver no x86     |
 | **Túneis**         | Cloudflare em Pi 5 e Dell (exposição à internet)          |
-| **Stream / Seafile** | Mídia e arquivos sync no Dell (HDD 1 TB)                |
+| **Mídia e arquivos** | RomM, Immich, *Arr/Jellyfin e Seafile no Dell (HDD)    |
 | **Home Assistant** | Automação residencial (Raspberry Pi 4)                    |
 | **ESP32**          | Extensão de alcance BLE                                   |
 
@@ -84,7 +90,9 @@ Cada host tem sua própria `proxy_network`. O **NPM de entrada** é o do **Pi 5*
 
 | Documento                             | Descrição                                                      |
 | ------------------------------------- | -------------------------------------------------------------- |
-| [Portainer](apps/portainer/README.md) | Único CE no Pi 5; Dell via Agent — ponto de partida da infra |
+| [Komodo](apps/komodo/README.md)       | Core no Pi 5; Periphery em cada host — ponto de partida da infra |
+| [MCPs](apps/mcps/README.md)           | Gateway MCPJungle e grupos usados por Cursor e OpenCode     |
+| [Descontinuados](DESCONTINUADOS.md)   | Portainer, Webmin e AdGuard — por que saíram                 |
 
 
 
@@ -94,11 +102,11 @@ Cada host tem sua própria `proxy_network`. O **NPM de entrada** é o do **Pi 5*
 
 | Stack | Host | Descrição |
 | ----- | ---- | --------- |
-| [admin](apps/stacks/raspberrypi/admin/README.md) | Pi 5 | NPM de entrada, Tunnel, Filebrowser, backup, MCP e MQTT `1883` |
-| [games](apps/stacks/raspberrypi/games/README.md) | Pi 5 | RomM — gerenciador de ROMs |
-| [immich](apps/stacks/raspberrypi/immich/README.md) | Pi 5 | Immich — fotos e vídeos |
-| [telemetria](apps/stacks/raspberrypi/telemetria/README.md) | Pi 5 | Grafana, InfluxDB, Mosquitto, Telegraf |
-| [admin](apps/stacks/dell3050/admin/README.md) | Dell | NPM, Tunnel, Filebrowser e backup |
+| [admin](apps/stacks/raspberrypi/admin/README.md) | Pi 5 | NPM de entrada, Tunnel, Filebrowser e MQTT `1883` |
+| [telemetria](apps/stacks/raspberrypi/telemetria/README.md) | Pi 5 | Grafana, InfluxDB, Mosquitto, Telegraf e coletor do Komodo |
+| [admin](apps/stacks/dell3050/admin/README.md) | Dell | NPM, Tunnel e Filebrowser |
+| [games](apps/stacks/dell3050/games/README.md) | Dell | RomM — gerenciador de ROMs |
+| [immich](apps/stacks/dell3050/immich/README.md) | Dell | Immich — fotos e vídeos |
 | [stream](apps/stacks/dell3050/stream/README.md) | Dell | *Arr + Jellyfin (HW `/dev/dri`) + Seerr + qBit + Jackett + Prowlarr |
 | [seafile](apps/stacks/dell3050/seafile/README.md) | Dell | Seafile + Seadoc |
 
@@ -110,7 +118,7 @@ Cada host tem sua própria `proxy_network`. O **NPM de entrada** é o do **Pi 5*
 
 | Documento                                                | Descrição                                                |
 | -------------------------------------------------------- | -------------------------------------------------------- |
-| [Home Assistant](apps/home_assistant/README.md)          | Apps: HACS, Uptime Kuma, Bermuda, Homelable (AdGuard removido) |
+| [Home Assistant](apps/home_assistant/README.md)          | Apps: HACS, Uptime Kuma, Bermuda, Homelable (AdGuard em [Descontinuados](DESCONTINUADOS.md)) |
 | [ESP32 — Hardware](hardware/esp32/README.md)             | DevKit V1, DevKitC V4 e Mini C3 — inventário e specs     |
 | [ESP32 — Bluetooth Tracker](automations/esp32/README.md) | Proxies BLE integrados ao Home Assistant via ESPHome     |
 | [Dell OptiPlex 3050 Micro](hardware/dell3050/README.md)      | Nó x86 — i5 6ª gen, 8 GB RAM, HDD 1 TB                   |
@@ -125,18 +133,20 @@ Cada host tem sua própria `proxy_network`. O **NPM de entrada** é o do **Pi 5*
 ```
 home-server/
 ├── apps/
-│   ├── portainer/                 # Portainer CE (compose standalone, via terminal)
+│   ├── komodo/                    # Komodo Core + Periphery + Mongo (compose no host)
+│   ├── mcps/                      # Gateway MCPJungle e servidores MCP
 │   ├── home_assistant/            # Documentação dos apps do HA
 │   └── stacks/
 │       ├── raspberrypi/           # hostname raspberrypi (Pi 5)
-│       │   ├── admin/             # NPM de entrada, túnel, Filebrowser, backup, MCP
-│       │   ├── games/             # RomM
-│       │   ├── immich/            # Fotos e vídeos
-│       │   └── telemetria/        # Grafana / Influx / MQTT
+│       │   ├── admin/             # NPM de entrada, túnel, Filebrowser
+│       │   └── telemetria/        # Grafana / Influx / MQTT + coletor do Komodo
 │       └── dell3050/              # hostname dell3050 (OptiPlex 3050 Micro)
-│           ├── admin/             # NPM, túnel, Filebrowser, backup
+│           ├── admin/             # NPM, túnel, Filebrowser
+│           ├── games/             # RomM
+│           ├── immich/            # Fotos e vídeos
 │           ├── seafile/           # Seafile + Seadoc
 │           └── stream/            # *Arr + Jellyfin
+├── DESCONTINUADOS.md              # Portainer, Webmin, AdGuard
 ├── automations/
 │   └── esp32/                     # Proxies Bluetooth (ESPHome)
 ├── hardware/
