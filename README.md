@@ -40,7 +40,7 @@ Dedicado ao [Home Assistant](apps/home_assistant/README.md). O HA roda **diretam
 
 ### Dell OptiPlex 3050 Micro — nó x86
 
-Hostname: **`dell3050`**. Intel Core **i5 de 6ª geração**, **8 GB de RAM**, **HDD de 1 TB**.
+Hostname: **`dell3050`**. Intel Core **i5 de 6ª geração**, **20 GB de RAM** (16 GB + 4 GB; a placa aceita até 32 GB). Discos: **M.2 NVMe 256 GB** (sistema), **SSD SATA 256 GB** (só Seafile e Immich) e **HDD 2,5" de 1 TB** em gaveta USB 3.0 (backup e mídia da stack stream).
 
 Em execução: **Komodo Periphery** (sem UI — o Core fica no Pi 5), stacks **admin**, **games**, **immich**, **stream** e **seafile**. Inventário: [hardware/dell3050](hardware/dell3050/README.md).
 
@@ -74,7 +74,7 @@ Os clientes de IA (Cursor, OpenCode) falam com um **gateway de MCPs** no Pi 5. C
 | **MCPs**           | Gateway no Pi 5; grupos por host, telemetria, HA e Git    |
 | **Proxy local**    | NPM Pi 5 (entrada) → NPM Dell se a app estiver no x86     |
 | **Túneis**         | Cloudflare em Pi 5 e Dell (exposição à internet)          |
-| **Mídia e arquivos** | RomM, Immich, *Arr/Jellyfin e Seafile no Dell (HDD)    |
+| **Mídia e arquivos** | No Dell: Seafile e Immich no SSD SATA; *Arr/Jellyfin e backups no HDD USB |
 | **Home Assistant** | Automação residencial (Raspberry Pi 4)                    |
 | **ESP32**          | Extensão de alcance BLE                                   |
 
@@ -121,7 +121,7 @@ Os clientes de IA (Cursor, OpenCode) falam com um **gateway de MCPs** no Pi 5. C
 | [Home Assistant](apps/home_assistant/README.md)          | Apps: HACS, Uptime Kuma, Bermuda, Homelable (AdGuard em [Descontinuados](DESCONTINUADOS.md)) |
 | [ESP32 — Hardware](hardware/esp32/README.md)             | DevKit V1, DevKitC V4 e Mini C3 — inventário e specs     |
 | [ESP32 — Bluetooth Tracker](automations/esp32/README.md) | Proxies BLE integrados ao Home Assistant via ESPHome     |
-| [Dell OptiPlex 3050 Micro](hardware/dell3050/README.md)      | Nó x86 — i5 6ª gen, 8 GB RAM, HDD 1 TB                   |
+| [Dell OptiPlex 3050 Micro](hardware/dell3050/README.md)      | Nó x86 — i5 6ª gen, 20 GB RAM, M.2 + SSD SATA + HDD USB  |
 | [Raspberry Pi](hardware/raspberry_pi/README.md)          | Pi 5 (M.2 256 GB) e Pi 4 (Home Assistant)                |
 
 
@@ -151,7 +151,7 @@ home-server/
 │   └── esp32/                     # Proxies Bluetooth (ESPHome)
 ├── hardware/
 │   ├── raspberry_pi/              # Placas, HATs PCIe e armazenamento (Pi)
-│   ├── dell3050/                  # OptiPlex 3050 Micro (nó x86 + HDD 1 TB)
+│   ├── dell3050/                  # OptiPlex 3050 Micro (M.2, SSD SATA, HDD USB)
 │   └── esp32/                     # DevKits ESP32 (BLE tracker / IRK)
 ├── shared/                        # Arquivos úteis compartilhados com o repositório
 └── README.md

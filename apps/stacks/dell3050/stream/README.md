@@ -2,7 +2,7 @@
 
 Stack de mídia e streaming do home server, baseada no ecossistema **\*Arr** — conjunto popular de aplicações open source e self-hosted para automatizar a aquisição, organização e reprodução de conteúdo audiovisual.
 
-**Onde roda:** [Dell OptiPlex 3050 Micro](../../../../hardware/dell3050/README.md) (`dell3050`), no HDD de 1 TB. **Migrada do Raspberry Pi 5** — configs em `~/Stream`, biblioteca em `/media/.../HDD/stream`.
+**Onde roda:** [Dell OptiPlex 3050 Micro](../../../../hardware/dell3050/README.md) (`dell3050`). A biblioteca e os downloads ficam no **HDD de 2,5" e 1 TB**, ligado em USB 3.0 numa gaveta Ugreen. O mesmo disco guarda os backups deste nó. **Migrada do Raspberry Pi 5.**
 
 > **Importante:** este repositório contém apenas um **exemplo funcional** da stack. A integração correta entre os serviços (indexadores, clientes de download, paths de volume, perfis de qualidade, nomenclatura de arquivos etc.) depende de configuração detalhada. **Consulte sempre a documentação oficial** de cada aplicação para montar a pipeline de ponta a ponta.
 
@@ -117,7 +117,7 @@ cp env.example .env
 
 | Variável | Descrição |
 | --- | --- |
-| `STREAM_MEDIA_PATH` | Volume compartilhado de mídia no HDD (downloads + biblioteca) |
+| `STREAM_MEDIA_PATH` | Volume compartilhado de mídia no HDD USB (downloads + biblioteca) |
 | `PUID` / `PGID` | UID/GID do usuário dono dos arquivos no host |
 | `WEBUI_PORT` / `UMASK` | Porta WebUI e umask do qBittorrent |
 | `AUTO_UPDATE` | Auto-update do Jackett |

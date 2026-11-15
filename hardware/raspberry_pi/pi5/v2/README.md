@@ -18,7 +18,7 @@ Raspberry Pi 5
         └── Slot M.2 NVMe → NVMe 256 GB [sistema operacional + containers]
 ```
 
-> **Mudança de topologia:** o HDD de 1 TB que antes ficava no Pi 5 via hub USB com fonte externa foi removido deste nó. O armazenamento em massa passou para o [Dell OptiPlex 3050 Micro](../../../dell3050/README.md). O Raspberry Pi 5 permanece **somente com o M.2 de 256 GB**, rodando o SO e alguns containers Docker.
+> **Mudança de topologia:** o HDD de 1 TB que antes ficava no Pi 5 saiu deste nó. Ele está no [Dell OptiPlex 3050 Micro](../../../dell3050/README.md), numa gaveta Ugreen ligada em USB 3.0, e guarda backup e a mídia da stack stream. O Raspberry Pi 5 permanece **somente com o M.2 de 256 GB**, rodando o SO e alguns containers Docker.
 
 #### Argon One v3 M.2 NVMe PCIE Case
 
@@ -78,7 +78,7 @@ Documentação: [Komodo](../../../../apps/komodo/README.md) · [MCPs](../../../.
 - [Configuração v1 (Waveshare + Geekworm)](../v1/README.md)
 
 ### Outros nós
-- [Dell OptiPlex 3050 Micro](../../../dell3050/README.md) — HDD 1 TB (games, immich, stream, seafile, admin, Periphery)
+- [Dell OptiPlex 3050 Micro](../../../dell3050/README.md) — M.2 256 GB (SO), SSD SATA 256 GB (Seafile e Immich), HDD 1 TB em USB (backup e stream)
 
 ### Imagens do Hardware
 ![Frontal](../../../../shared/raspberrypi5/v2/front.jpg)

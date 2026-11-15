@@ -6,7 +6,7 @@ Máquinas x86 adicionadas à infraestrutura do home server. A documentação de 
 
 | Dispositivo | CPU | RAM | Armazenamento | Função |
 | ----------- | --- | --- | ------------- | ------ |
-| **Dell OptiPlex 3050 Micro** | Intel Core i5 (6ª geração) | 8 GB | HDD 1 TB | Novo nó da infra — armazenamento em massa e capacidade x86 |
+| **Dell OptiPlex 3050 Micro** | Intel Core i5 (6ª geração) | 20 GB (16+4), até 32 GB | M.2 256 GB + SSD SATA 256 GB + HDD 1 TB (USB) | Nó x86 — sistema, fotos/arquivos e mídia |
 
 ---
 
@@ -14,7 +14,7 @@ Máquinas x86 adicionadas à infraestrutura do home server. A documentação de 
 
 Mini PC (form factor **Micro** / mini) da linha OptiPlex, adicionado ao home server para ampliar capacidade de processamento e armazenamento em relação ao setup só com Raspberry Pi.
 
-Com a chegada desta máquina, o **HDD de 1 TB** que antes ficava ligado ao Raspberry Pi 5 via hub USB passou a fazer parte deste nó. O Pi 5 ficou apenas com o **NVMe M.2 de 256 GB** (sistema operacional e alguns containers Docker) — detalhes em [pi5/v2](../raspberry_pi/pi5/v2/README.md).
+O **HDD de 2,5" e 1 TB** que antes ficava no Raspberry Pi 5 passou para este nó, agora numa gaveta USB. O Pi 5 ficou apenas com o **NVMe M.2 de 256 GB** — detalhes em [pi5/v2](../raspberry_pi/pi5/v2/README.md).
 
 ### Especificações neste setup
 
@@ -24,13 +24,15 @@ A linha OptiPlex 3050 Micro usa chipset Intel B250, gráficos integrados Intel H
 | ---- | ------- |
 | **Modelo** | Dell OptiPlex 3050 Micro (mini) |
 | **CPU** | Intel Core i5 — 6ª geração (Skylake) |
-| **RAM** | 8 GB DDR4 |
-| **Armazenamento** | HDD 1 TB |
+| **RAM** | 20 GB DDR4 (módulo de 16 GB + módulo de 4 GB). O teto da placa é 32 GB, em 2× SODIMM |
+| **Disco do sistema** | M.2 NVMe 256 GB |
+| **Disco de dados** | SSD 256 GB na baia SATA interna |
+| **Disco externo** | HDD 2,5" 1 TB em gaveta USB 3.0 |
 | **Form factor** | Micro / mini desktop |
 
 ### Papel na infraestrutura
 
-Nó x86 compacto com disco de massa de 1 TB, complementando o Raspberry Pi 5 (containers leves no NVMe) e o Raspberry Pi 4 (Home Assistant). O form factor Micro facilita manter tudo no mesmo rack/armário do homelab sem ocupar espaço de um desktop torre.
+Nó x86 com três discos de papéis separados, complementando o Raspberry Pi 5 (containers leves no NVMe) e o Raspberry Pi 4 (Home Assistant). O form factor Micro facilita manter a máquina no mesmo rack do homelab; o volume grande fica fora do chassi, na gaveta USB.
 
 Hostname na rede: **`dell3050`**.
 
@@ -38,11 +40,17 @@ Hostname na rede: **`dell3050`**.
 
 Acesso local às apps deste nó: o cliente fala com o **NPM do Pi 5**, que **repassa** ao NPM deste host. Exposição à internet: túnel Cloudflare **deste** nó. Ver [estratégia entre NPMs](../../apps/stacks/raspberrypi/admin/README.md#estratégia-de-comunicação-entre-os-npms).
 
-### Resumo do armazenamento
+### Armazenamento
 
-| Disco | Capacidade | Função |
-| ----- | ---------- | ------ |
-| HDD | 1 TB | Armazenamento em massa (mídia *Arr*, Seafile, etc.) |
+Cada disco tem um papel fixo. O SSD SATA guarda só o Seafile e o Immich. A biblioteca de vídeo e os backups ficam no HDD.
+
+| Disco | Interface | Capacidade | Função |
+| ----- | --------- | ---------- | ------ |
+| M.2 NVMe | Slot M.2 da placa | 256 GB | Sistema operacional e os arquivos deste nó (compose, configs das stacks) |
+| SSD | SATA interna (baia 2,5") | 256 GB | **Só** [Seafile](../../apps/stacks/dell3050/seafile/README.md) e [Immich](../../apps/stacks/dell3050/immich/README.md): biblioteca, bancos e dados dessas duas stacks |
+| HDD 2,5" | USB 3.0 | 1 TB | Backup do nó e mídia da stack [stream](../../apps/stacks/dell3050/stream/README.md) (*Arr* + Jellyfin) |
+
+O HDD fica numa **gaveta Ugreen para HD de 3,5"**, com fonte própria, que alimenta o disco. A gaveta está preparada para um disco de grande volume no futuro; hoje ela carrega este HDD de 2,5" e 1 TB.
 
 ### Containers em execução
 
@@ -53,9 +61,9 @@ Inventário a partir de `docker compose ls` / `docker ps` neste host. O Pi 4 (Ho
 | **komodo** (Periphery) | `komodo-periphery` | Agente local. Sem UI — o Core fica no Pi 5 |
 | **admin** | `nginx-proxy-manager`, `cloudflared_tunnel`, `filebrowser` | Proxy, túnel Cloudflare e navegação de arquivos |
 | **games** | `romm`, `romm-db` | Gerenciador de ROMs |
-| **immich** | `immich_server`, `immich_machine_learning`, `immich_postgres`, `immich_redis` | Fotos e vídeos |
-| **stream** | `jellyfin`, `seerr`, `sonarr`, `radarr`, `bazarr`, `jackett`, `prowlarr`, `qbittorrent` | Pipeline *Arr + streaming (usa o HDD) |
-| **seafile** | `seafile`, `seadoc`, `seafile-mysql`, `seafile-redis` | Arquivos sync / colaboração (Seafile) |
+| **immich** | `immich_server`, `immich_machine_learning`, `immich_postgres`, `immich_redis` | Fotos e vídeos — dados no SSD SATA |
+| **stream** | `jellyfin`, `seerr`, `sonarr`, `radarr`, `bazarr`, `jackett`, `prowlarr`, `qbittorrent` | Pipeline *Arr + streaming — biblioteca no HDD USB |
+| **seafile** | `seafile`, `seadoc`, `seafile-mysql`, `seafile-redis` | Arquivos sync — dados no SSD SATA, junto com o Immich |
 
 ```
 dell3050
