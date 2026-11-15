@@ -6,7 +6,7 @@ Máquinas x86 adicionadas à infraestrutura do home server. A documentação de 
 
 | Dispositivo | CPU | RAM | Armazenamento | Função |
 | ----------- | --- | --- | ------------- | ------ |
-| **Dell OptiPlex 3050 Micro** | Intel Core i5 (6ª geração) | 20 GB (16+4), até 32 GB | M.2 256 GB + SSD SATA 256 GB + HDD 1 TB (USB) | Nó x86 — sistema, fotos/arquivos e mídia |
+| **Dell OptiPlex 3050 Micro** | Intel Core i5 (6ª geração) | 20 GB (16+4), até 32 GB | M.2 256 GB + SSD SATA 256 GB + HDD 1 TB (USB) | Entretenimento e utilidades |
 
 ---
 
@@ -32,7 +32,7 @@ A linha OptiPlex 3050 Micro usa chipset Intel B250, gráficos integrados Intel H
 
 ### Papel na infraestrutura
 
-Nó x86 com três discos de papéis separados, complementando o Raspberry Pi 5 (containers leves no NVMe) e o Raspberry Pi 4 (Home Assistant). O form factor Micro facilita manter a máquina no mesmo rack do homelab; o volume grande fica fora do chassi, na gaveta USB.
+Hospeda as aplicações de entretenimento e as utilidades: jogos, fotos, streaming e arquivos. O form factor Micro facilita manter a máquina no mesmo rack do homelab; o volume grande fica fora do chassi, na gaveta USB.
 
 Hostname na rede: **`dell3050`**.
 

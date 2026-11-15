@@ -24,7 +24,9 @@ A infraestrutura documentada neste repositório roda em **três nós**: dois Ras
 
 Os ESP32 usados como Bluetooth trackers e captura de IRK na automação residencial estão documentados em [hardware/esp32/README.md](hardware/esp32/README.md) (firmware em [automations/esp32](automations/esp32/README.md)).
 
-### Raspberry Pi 5 — containers e stacks
+### Raspberry Pi 5 — gerenciamento
+
+A ideia deste nó é ser o responsável pelo gerenciamento do home server, com ferramentas feitas para isso.
 
 Hostname: **`raspberrypi`**. Sistema operacional [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/). Armazenamento: **somente NVMe M.2 256 GB**.
 
@@ -34,11 +36,13 @@ Em execução: o [Komodo](apps/stacks/raspberrypi/komodo/README.md) (Core, Perip
 
 ### Raspberry Pi 4 — automação residencial
 
-Dedicado ao [Home Assistant](apps/home_assistant/README.md). O HA roda **diretamente no dispositivo como sistema operacional**, no modo **Supervisor** (instalação gerenciada com suporte nativo a apps/add-ons). Sem alteração de inventário Docker neste momento.
+Fica somente com a automação residencial e o gerenciamento dos dispositivos IoT, pelo [Home Assistant](apps/home_assistant/README.md). O HA roda **diretamente no dispositivo como sistema operacional**, no modo **Supervisor** (instalação gerenciada com suporte nativo a apps/add-ons). Sem alteração de inventário Docker neste momento.
 
 **Referência:** [Raspberry Pi 4 Model B](https://www.raspberrypi.com/products/raspberry-pi-4-model-b/)
 
-### Dell OptiPlex 3050 Micro — nó x86
+### Dell OptiPlex 3050 Micro — entretenimento e utilidades
+
+A ideia deste nó é hospedar as aplicações de entretenimento e as utilidades.
 
 Hostname: **`dell3050`**. Intel Core **i5 de 6ª geração**, **20 GB de RAM** (16 GB + 4 GB; a placa aceita até 32 GB). Discos: **M.2 NVMe 256 GB** (sistema), **SSD SATA 256 GB** (só Seafile e Immich) e **HDD 2,5" de 1 TB** em gaveta USB 3.0 (backup e mídia da stack stream).
 

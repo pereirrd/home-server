@@ -1,7 +1,7 @@
 # Raspberry Pi 5
 
 
-Placa principal da infraestrutura de containers. Roda [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/), hospedando o [Komodo](../../../../apps/stacks/raspberrypi/komodo/README.md) (Core) e as [stacks Docker](../../../../apps/stacks/raspberrypi/admin/README.md) deste nó.
+Responsável pelo gerenciamento do home server, com ferramentas feitas para isso. Roda [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/), hospedando o [Komodo](../../../../apps/stacks/raspberrypi/komodo/README.md) (Core) e as [stacks Docker](../../../../apps/stacks/raspberrypi/admin/README.md) deste nó.
 
 ### Especificações da placa
 
