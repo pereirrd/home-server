@@ -12,7 +12,7 @@ Documentação das aplicações e integrações instaladas no [Home Assistant](h
 | Comunidade (via repositório customizado) | HACS                          |
 | HACS (integrações customizadas)          | Bermuda, Homelable            |
 
-> **AdGuard Home** foi removido da infraestrutura — ver seção abaixo.
+> **AdGuard Home** foi removido. O motivo está em [DESCONTINUADOS.md](../../DESCONTINUADOS.md).
 
 Para instalar apps de repositórios da comunidade, é necessário adicionar a URL do repositório em **Settings → Apps → Repositories** no Home Assistant. O **HACS** estende essa capacidade para integrações, temas e componentes customizados além dos apps em si.
 
@@ -25,14 +25,6 @@ O [Home Assistant Community Store (HACS)](https://hacs.xyz/) é a loja da comuni
 Nesta instalação, o HACS é a **base para expandir o HA com repositórios da comunidade**, incluindo as integrações Bermuda e Homelable.
 
 **Referência:** [HACS — Configuração inicial](https://hacs.xyz/docs/use/configuration/basic/)
-
-### AdGuard Home — removido
-
-[AdGuard Home](https://adguard.com/adguard-home/overview.html) chegou a ser usado como servidor DNS de bloqueio de anúncios e rastreadores em nível de rede (app do repositório oficial do Home Assistant, mantido por [hassio-addons](https://github.com/hassio-addons)).
-
-**Não está mais em uso na infraestrutura.** O bloqueio em nível de DNS interferia em funcionalidades de aplicativos e jogos: o **Duolingo** travava constantemente na rede com AdGuard, e o app da **Globoplay** também apresentava problemas. Diante da dificuldade de afinar listas/exceções sem quebrar outros serviços do dia a dia, a decisão foi **remover o AdGuard da infra**.
-
-**Referência (histórico):** [AdGuard Home — Home Assistant Community App](https://github.com/hassio-addons/app-adguard-home)
 
 ### Uptime Kuma
 
@@ -101,9 +93,8 @@ Consulte sempre a documentação oficial de cada app antes de alterar configura�
 - [Home Assistant](https://www.home-assistant.io/)
 - [HACS](https://hacs.xyz/)
 - [HACS — Configuração inicial](https://hacs.xyz/docs/use/configuration/basic/)
-- [AdGuard Home](https://adguard.com/adguard-home/overview.html) *(histórico — removido da infra)*
 - [hassio-addons](https://github.com/hassio-addons)
-- [AdGuard Home — Home Assistant Community App](https://github.com/hassio-addons/app-adguard-home) *(histórico)*
+- [Aplicações descontinuadas — AdGuard Home](../../DESCONTINUADOS.md)
 - [Uptime Kuma](https://uptime.kuma.pet/)
 - [Uptime Kuma — Home Assistant Community App](https://github.com/hassio-addons/app-uptime-kuma)
 - [fabio-garavini/hassio-addons](https://github.com/fabio-garavini/hassio-addons)

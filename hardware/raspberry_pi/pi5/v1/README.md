@@ -1,6 +1,6 @@
 # Raspberry Pi 5
 
-Placa principal da infraestrutura. Roda [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/) com administração via [Webmin](https://webmin.com/), hospedando o [Portainer](../../../../apps/portainer/README.md) e as [stacks Docker](../../../../apps/stacks/raspberrypi/admin/README.md).
+Placa principal da infraestrutura, na montagem anterior (HAT PCIe com HDD 2.5"). Roda [Debian Trixie 13](https://www.raspberrypi.com/news/trixie-the-new-version-of-raspberry-pi-os/). Nesta época o sistema era administrado pelo [Webmin](https://webmin.com/) e os containers pelo Portainer — os dois saíram de uso; o motivo está em [DESCONTINUADOS.md](../../../../DESCONTINUADOS.md). A configuração atual do mesmo Pi está em [v2](../v2/README.md).
 
 ### Especificações da placa
 

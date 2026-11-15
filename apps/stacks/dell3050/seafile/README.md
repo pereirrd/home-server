@@ -1,6 +1,6 @@
 # Seafile
 
-Stack de sincronização e compartilhamento de arquivos do home server, baseada no [Seafile](https://www.seafile.com/). Roda no **Dell OptiPlex 3050 Micro** (`dell3050`), junto ao armazenamento em massa (HDD 1 TB).
+Stack de sincronização e compartilhamento de arquivos do home server, baseada no [Seafile](https://www.seafile.com/). Roda no **Dell OptiPlex 3050 Micro** (`dell3050`). Os dados ficam no **SSD SATA de 256 GB**, disco reservado a esta stack e ao [Immich](../immich/README.md).
 
 > Este repositório traz um **exemplo ilustrativo** do compose em produção. Ajuste volumes, hostname e secrets; consulte sempre a [documentação oficial](https://manual.seafile.com/docker/deploy_seafile_with_docker/).
 
@@ -53,7 +53,7 @@ Copie `env.example` para `.env` e preencha. Variáveis críticas:
 
 | Variável | Descrição |
 | --- | --- |
-| `BASIC_STORAGE_PATH` | Raiz dos volumes no host (HDD) |
+| `BASIC_STORAGE_PATH` | Raiz dos volumes no host (SSD SATA de 256 GB) |
 | `SEAFILE_VOLUME` / `SEAFILE_MYSQL_VOLUME` / `SEADOC_VOLUME` | Paths derivados (ou absolutos) |
 | `SEAFILE_SERVER_HOSTNAME` | Hostname público/local (ex.: `seafile.local.meudominio.me`) |
 | `SEAFILE_SERVER_PROTOCOL` | `https` quando atrás do NPM com TLS |

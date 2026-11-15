@@ -1,15 +1,15 @@
 # Hardware — Raspberry Pi
 
-Apresentando a infraestrutura física baseada em Raspberry Pi. A documentação de software (stacks, Portainer, Home Assistant) está no [README principal](../../README.md). O nó x86 Dell está em [hardware/dell3050](../dell3050/README.md).
+Apresentando a infraestrutura física baseada em Raspberry Pi. A documentação de software (stacks, Komodo, Home Assistant) está no [README principal](../../README.md). O nó x86 Dell está em [hardware/dell3050](../dell3050/README.md).
 
 ## Visão geral
 
 | Dispositivo | RAM | Função | SO / boot |
 | ----------- | --- | ------ | --------- |
-| **Raspberry Pi 5** (`raspberrypi`) | 8 GB | Portainer CE, admin, games, immich, telemetria (só M.2) | NVMe M.2 256 GB (boot + containers) |
-| **Raspberry Pi 4** | 8 GB | Automação residencial (Home Assistant) — sem inventário Docker aqui | SD card 32 GB (boot) + SSD 224 GB (USB 3.0) |
+| **Raspberry Pi 5** (`raspberrypi`) | 8 GB | Gerenciamento do home server | NVMe M.2 256 GB (boot + containers) |
+| **Raspberry Pi 4** | 8 GB | Somente automação residencial e dispositivos IoT | SD card 32 GB (boot) + SSD 224 GB (USB 3.0) |
 
-> O HDD de 1 TB não fica mais no Pi 5 — ver [Dell OptiPlex 3050 Micro](../dell3050/README.md).
+> O HDD de 1 TB não fica mais no Pi 5. No Dell ele está numa gaveta USB e guarda backup e a mídia da stack stream — ver [Dell OptiPlex 3050 Micro](../dell3050/README.md).
 
 ---
 

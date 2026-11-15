@@ -1,0 +1,92 @@
+name: mcps
+
+services:
+
+  db:
+    image: postgres:17
+    container_name: mcpjungle-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    volumes:
+      - ${MCPJUNGLE_DATA_PATH}:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U \"$$POSTGRES_USER\" -d \"$$POSTGRES_DB\""]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  mcpjungle:
+    image: ghcr.io/mcpjungle/mcpjungle:${MCPJUNGLE_IMAGE_TAG}
+    container_name: mcpjungle-server
+    restart: unless-stopped
+    environment:
+      DATABASE_URL: postgres://${POSTGRES_USER}:${POSTGRES_PASSWORD}@db:5432/${POSTGRES_DB}
+      SERVER_MODE: ${SERVER_MODE}
+      OTEL_ENABLED: ${OTEL_ENABLED}
+      MCP_SERVER_INIT_REQ_TIMEOUT_SEC: ${MCP_SERVER_INIT_REQ_TIMEOUT_SEC}
+    volumes:
+      - ${MCPJUNGLE_HOST_PATH}:/host:ro
+    depends_on:
+      db:
+        condition: service_healthy
+    networks:
+      - default
+      - proxy_network
+
+  komodo-mcp-server:
+    image: ${KOMODO_MCP_IMAGE}:${KOMODO_MCP_IMAGE_TAG}
+    container_name: komodo-mcp-server
+    restart: unless-stopped
+    security_opt:
+      - no-new-privileges:true
+    environment:
+      TZ: ${TZ}
+      MCP_TRANSPORT: ${KOMODO_MCP_TRANSPORT_MODE}
+      MCP_BIND_HOST: 0.0.0.0
+      MCP_PORT: ${KOMODO_MCP_PORT}
+      MCP_AUTH_ENABLED: ${MCP_AUTH_ENABLED}
+      MCP_ALLOWED_HOSTS: ${MCP_ALLOWED_HOSTS}
+      KOMODO_URL: ${KOMODO_URL}
+      KOMODO_API_KEY: ${KOMODO_API_KEY}
+      KOMODO_API_SECRET: ${KOMODO_API_SECRET}
+    networks:
+      - default
+      - proxy_network
+
+  npm-mcp-raspberrypi:
+    image: ${NPM_MCP_IMAGE}:${NPM_MCP_IMAGE_TAG}
+    container_name: npm-mcp-raspberrypi
+    restart: unless-stopped
+    environment:
+      NPM_API_URL: ${NPM_RPI_API_URL}
+      NPM_IDENTITY: ${NPM_RPI_IDENTITY}
+      NPM_SECRET: ${NPM_RPI_SECRET}
+      NPM_MCP_TRANSPORT: http
+      NPM_MCP_HOST: 0.0.0.0
+      NPM_MCP_PORT: "8000"
+    networks:
+      - default
+      - proxy_network
+
+  npm-mcp-dell3050:
+    image: ${NPM_MCP_IMAGE}:${NPM_MCP_IMAGE_TAG}
+    container_name: npm-mcp-dell3050
+    restart: unless-stopped
+    environment:
+      NPM_API_URL: ${NPM_DELL3050_API_URL}
+      NPM_IDENTITY: ${NPM_DELL3050_IDENTITY}
+      NPM_SECRET: ${NPM_DELL3050_SECRET}
+      NPM_MCP_TRANSPORT: http
+      NPM_MCP_HOST: 0.0.0.0
+      NPM_MCP_PORT: "8000"
+    networks:
+      - default
+      - proxy_network
+
+networks:
+  proxy_network:
+    external: true
+    name: proxy_network
