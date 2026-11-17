@@ -53,7 +53,7 @@ Este host concentra o **NPM de entrada** da LAN (`*.local` → IP estático **10
 | **komodo** | `komodo-core`, `komodo-periphery`, `komodo-mongo` | Core da infra (UI/API), Periphery deste host e banco. Sobe por `docker compose`, fora do sync |
 | **admin** | `nginx-proxy-manager`, `cloudflared_tunnel`, `filebrowser` | NPM de entrada, túnel e Filebrowser |
 | **mcps** | `mcpjungle-server`, `mcpjungle-db`, `komodo-mcp-server`, `npm-mcp-raspberrypi`, `npm-mcp-dell3050` | Gateway de MCPs e servidores do Komodo e dos dois NPMs |
-| **telemetria** | `grafana`, `influxdb`, `mosquitto`, `telegraf`, `portainer-collector` | Observabilidade. O coletor lê a API do Komodo e publica no prefixo MQTT `portainer/` |
+| **telemetria** | `grafana`, `influxdb`, `mosquitto`, `telegraf`, `container-collector` | Observabilidade. O coletor lê a API do Komodo e publica no prefixo MQTT `container/` |
 
 ```
 raspberrypi (Pi 5)

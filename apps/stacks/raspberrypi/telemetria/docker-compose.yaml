@@ -1,9 +1,9 @@
 services:
 
-  # Nome herdado do Portainer. Lê a API do Komodo e publica em portainer/#.
-  portainer-collector:
-    build: ${STACK_DIR}/portainer
-    container_name: portainer-collector
+  # Lê a API do Komodo e publica em container/#.
+  container-collector:
+    build: ${STACK_DIR}/container-collector
+    container_name: container-collector
     restart: unless-stopped
     environment:
       KOMODO_URL: ${KOMODO_URL}
@@ -13,8 +13,8 @@ services:
       KOMODO_API_SECRET: ${KOMODO_API_SECRET}
       MQTT_HOST: telemetria-mosquitto
       MQTT_PORT: "1883"
-      MQTT_USER: portainer
-      MQTT_PORTAINER_PASSWORD: ${MQTT_PORTAINER_PASSWORD}
+      MQTT_USER: container
+      MQTT_CONTAINER_PASSWORD: ${MQTT_CONTAINER_PASSWORD}
       INFLUX_URL: http://telemetria-influxdb:8086
       INFLUX_TOKEN: ${INFLUX_TOKEN}
       INFLUX_ORG: ${INFLUX_ORG}

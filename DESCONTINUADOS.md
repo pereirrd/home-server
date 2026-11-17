@@ -10,7 +10,7 @@ O [Portainer](https://www.portainer.io/) Community Edition era o gerenciador de 
 
 **Por que saiu.** O Portainer guarda o `docker-compose.yaml` de cada stack em um **banco interno**. Mudar uma stack significava editar esse banco pela interface, não um arquivo no disco. Isso dificulta a manutenção e, principalmente, mudanças feitas por **agentes de IA**, que trabalham em arquivos versionados. Foram avaliadas outras aplicações de gestão de containers. O [Komodo](apps/stacks/raspberrypi/komodo/README.md) foi o escolhido pela **interface amigável** e porque, no modo *Files on Server*, o compose fica **no disco** do host: a IA edita o arquivo e o deploy lê esse arquivo.
 
-**No lugar.** [Komodo](apps/stacks/raspberrypi/komodo/README.md) — Core no Pi 5, Periphery em cada host Docker. O nome `portainer` sobrevive só no coletor da [telemetria](apps/stacks/raspberrypi/telemetria/README.md): o container `portainer-collector` passou a ler a API do Komodo, mas continua publicando no prefixo MQTT `portainer/` para os dashboards não mudarem.
+**No lugar.** [Komodo](apps/stacks/raspberrypi/komodo/README.md) — Core no Pi 5, Periphery em cada host Docker. O coletor da [telemetria](apps/stacks/raspberrypi/telemetria/README.md) é o `container-collector`: lê a API do Komodo e publica no prefixo MQTT `container/`. As medições no InfluxDB e a tag `endpoint` dos dashboards não mudaram com o nome.
 
 ## Webmin
 
