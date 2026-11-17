@@ -74,9 +74,9 @@ O Telegraf consome esses tópicos e grava as séries no bucket do InfluxDB. No G
 
 ## Coletor do Komodo (`container-collector`)
 
-O container lê a API do Komodo (`KOMODO_URL`, em geral `http://komodo-core:9120` na `proxy_network`), garante o bucket Docker no InfluxDB e publica em `container/<servidor>/<medição>`. O usuário MQTT é `container`, com escrita em `container/#`.
+O container lê a API do Komodo (`KOMODO_URL`, em geral `http://komodo-core:9120` na `proxy_network`) e, a cada ciclo, lista os servidores habilitados. Publica o inventário de cada um em `container/<endpoint>/<medição>`. O usuário MQTT é `container`, com escrita em `container/#`.
 
-As medições gravadas no InfluxDB continuam `containers`, `volumes`, `images`, `networks` e `stacks`. A tag de endpoint é a do ambiente que o dashboard já usava. O Grafana consulta essas medições, não o nome do tópico.
+O servidor `KOMODO_SERVER` (`raspberrypi`) continua com a tag `KOMODO_ENDPOINT` (`Raspberrypi5`). Os demais usam o `name` do Komodo, então `dell3050` aparece no filtro Ambiente. Um servidor novo habilitado no Core entra sem mudança de configuração. As medições gravadas no InfluxDB continuam `containers`, `volumes`, `images`, `networks` e `stacks`. O Grafana consulta essas medições, não o nome do tópico.
 
 Segredos (`KOMODO_API_KEY`, `KOMODO_API_SECRET`, `MQTT_CONTAINER_PASSWORD`) ficam só no `.env`.
 
@@ -96,6 +96,8 @@ Copie `env.example` para `.env` e preencha:
 | `GRAFANA_ROOT_URL` | URL canônica atrás do NPM |
 | `INFLUX_BUCKET_DOCKER` | Bucket do inventário Docker publicado pelo coletor |
 | `KOMODO_URL` | API do Core na rede Docker (`http://komodo-core:9120`) |
+| `KOMODO_SERVER` | Servidor do Core que continua com a tag `KOMODO_ENDPOINT` (`raspberrypi`) |
+| `KOMODO_ENDPOINT` | Tag `endpoint` desse servidor (`Raspberrypi5`). Os outros servidores habilitados usam o `name` do Komodo |
 | `KOMODO_API_KEY` / `KOMODO_API_SECRET` | Chave de API do Komodo usada pelo coletor |
 | `MQTT_CONTAINER_PASSWORD` | Senha do usuário MQTT `container` (escrita em `container/#`) |
 
