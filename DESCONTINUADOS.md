@@ -1,6 +1,6 @@
 # Aplicações descontinuadas
 
-Registro do que já fez parte deste home server e **saiu de uso**. O restante do repositório descreve só o que está em execução. Este arquivo guarda o motivo da troca, para não repetir a mesma escolha sem contexto.
+Registro do que já fez parte deste home server e **saiu de uso**. O restante do repositório descreve só o que está em execução.
 
 Cada entrada diz o que a aplicação fazia, por que foi descartada e o que ficou no lugar.
 
