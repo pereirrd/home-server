@@ -20,7 +20,7 @@ O universo de home server é **muito vasto**. Além do que está documentado aqu
 
 ## Hardware
 
-A infraestrutura documentada neste repositório roda em **três nós**: dois Raspberry Pi com **8 GB de RAM** e um **Dell OptiPlex 3050 Micro**. Detalhes de placas, HATs PCIe, discos e topologia: [hardware/raspberry_pi/README.md](hardware/raspberry_pi/README.md) · [hardware/dell3050/README.md](hardware/dell3050/README.md).
+A infraestrutura documentada neste repositório roda em **três nós**: dois Raspberry Pi **modelos 4 e 5** e um **Dell OptiPlex 3050 Micro**. Detalhes de placas, HATs PCIe, discos e topologia: [hardware/raspberry_pi/README.md](hardware/raspberry_pi/README.md) · [hardware/dell3050/README.md](hardware/dell3050/README.md).
 
 Os ESP32 usados como Bluetooth trackers e captura de IRK na automação residencial estão documentados em [hardware/esp32/README.md](hardware/esp32/README.md) (firmware em [automations/esp32](automations/esp32/README.md)).
 
@@ -71,18 +71,6 @@ Cada host tem sua própria `proxy_network`. O **NPM de entrada** é o do **Pi 5*
 
 Os clientes de IA (Cursor, OpenCode) falam com um **gateway de MCPs** no Pi 5. Cada grupo recorta um conjunto de servidores — Komodo, proxy, Grafana, Home Assistant, GitHub. Detalhes: [MCPs](apps/stacks/raspberrypi/mcps/README.md).
 
-| Área               | Função / host                                             |
-| ------------------ | --------------------------------------------------------- |
-| **Komodo**         | Core no Pi 5; Periphery no Pi 5 e no Dell                 |
-| **Stacks**         | Serviços por contexto; compose no disco, deploy no Komodo |
-| **MCPs**           | Gateway no Pi 5; grupos por host, telemetria, HA e Git    |
-| **Proxy local**    | NPM Pi 5 (entrada) → NPM Dell se a app estiver no x86     |
-| **Túneis**         | Cloudflare em Pi 5 e Dell (exposição à internet)          |
-| **Mídia e arquivos** | No Dell: Seafile e Immich no SSD SATA; *Arr/Jellyfin e backups no HDD USB |
-| **Home Assistant** | Automação residencial (Raspberry Pi 4)                    |
-| **ESP32**          | Extensão de alcance BLE                                   |
-
-![Visão geral do home server](shared/homelable-canvas.png)
 
 
 ## Documentação
